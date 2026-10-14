@@ -64,7 +64,6 @@ body {
   flex-direction: column;
   border: 1px solid var(--ri-border);
   border-radius: var(--ri-radius-card);
-  background: var(--ri-surface);
 }
 
 .popup-row {
@@ -137,8 +136,15 @@ label.popup-row {
 }
 
 /* Theme: radio inputs inside a segmented control, as in the Focus header. */
+/* A floated legend joins the content flow instead of sitting on the border. */
 .popup-theme .popup-label {
+  float: left;
+  width: 100%;
   margin-bottom: 10px;
+}
+
+.popup-segmented {
+  clear: both;
 }
 
 .popup-segmented {
