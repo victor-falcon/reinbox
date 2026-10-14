@@ -5,13 +5,18 @@
    a menu card. Gmail's chip markup: .H1 is the outline/fill layer, .HY the
    content, .H5 the label. */
 
+/* It lives in Gmail's toolbar, which lays it out on one row with the
+   pagination (toolbar.css). */
 html.reinbox [role=main] [role=toolbar].G6 {
   position: relative;
   display: flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: 8px;
-  min-height: 52px;
-  padding-inline: var(--ri-tb-inset);
+  min-width: 0;
+  min-height: 44px;
+  margin: 0 !important;
+  padding: 0 !important;
   box-sizing: border-box;
   background: transparent;
 }
@@ -138,7 +143,7 @@ html.reinbox [role=toolbar].G6:not(.ri-filters-open) .a5E {
 html.reinbox [role=toolbar].G6.ri-filters-open .Ii {
   position: absolute;
   top: calc(100% + 4px);
-  left: var(--ri-tb-inset);
+  left: 0;
   z-index: 5;
   width: 300px;
   padding: 6px;
@@ -196,4 +201,39 @@ html.reinbox [role=toolbar].G6.ri-filters-open [data-type="RLrFpb"] {
   border-top: 1px solid var(--ri-border);
   border-radius: 0 0 12px 12px;
   color: var(--ri-text2);
+}
+
+/* ---- Trash / Spam notice ("deleted after 30 days · Empty now") ---- */
+
+html.reinbox [role=main] .ya {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 12px;
+  /* Same edges as the rows. */
+  max-width: calc(var(--ri-column) - 40px);
+  text-align: left !important;
+  margin: 4px auto 16px !important;
+  padding: 10px 16px !important;
+  border: 0 !important;
+  border-radius: var(--ri-radius-button-lg);
+  background: var(--ri-surface2) !important;
+  box-shadow: none !important;
+  color: var(--ri-text2) !important;
+  font: 500 13px var(--ri-font) !important;
+  box-sizing: border-box;
+}
+
+html.reinbox [role=main] .ya * {
+  color: inherit !important;
+  font: inherit !important;
+}
+
+html.reinbox [role=main] .ya :is(a, span[role=link], [role=button]) {
+  margin-left: 8px;
+  color: var(--ri-accent) !important;
+  font-weight: 700 !important;
+  text-decoration: none;
+  cursor: pointer;
 }

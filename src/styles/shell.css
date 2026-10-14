@@ -98,6 +98,17 @@ html.reinbox form[role="search"]:focus-within {
   box-shadow: var(--ri-shadow) !important;
 }
 
+/* The open box covers the views control's space: hide it instead of letting
+   it peek out from under the box. */
+html.reinbox header#gb:has(form[role="search"]:focus-within) .ri-views {
+  opacity: 0;
+  pointer-events: none;
+}
+
+html.reinbox .ri-views {
+  transition: opacity 0.15s ease;
+}
+
 /* Advanced search options only while the box is open. */
 html.reinbox form[role="search"]:not(:focus-within) button[gh="sda"] {
   display: none;
@@ -247,6 +258,13 @@ html.reinbox .aeN * {
   color: inherit !important;
 }
 
+/* Items as rounded pills inset from the drawer's edges, not Gmail's
+   half-pills glued to the left edge. */
+html.reinbox .aeN .TO {
+  margin: 0 0 0 8px !important;
+  border-radius: var(--ri-radius-button) !important;
+}
+
 html.reinbox .aeN .TO:hover {
   background: var(--ri-hover) !important;
 }
@@ -319,4 +337,28 @@ html.reinbox:has(.dw [role="dialog"]) .ri-fab {
    place for it in Focus. */
 html.reinbox .aeG {
   display: none !important;
+}
+
+/* ---- Quick settings panel (gear icon) --------------------------------- */
+
+html.reinbox .IU {
+  border: 1px solid var(--ri-border);
+  border-radius: var(--ri-radius-card) !important;
+  box-shadow: var(--ri-fab-shadow) !important;
+}
+
+/* Gmail renders it for its light theme only; invert it as a whole so the
+   text, radios and previews stay legible. */
+html.reinbox.ri-dark .IU {
+  filter: invert(0.9) hue-rotate(180deg);
+}
+
+/* The panel sits where the FAB is. */
+html.reinbox:has(.aUx .IU) .ri-fab {
+  right: 372px;
+}
+
+/* The drawer's scrim dims the page; the FAB would float above it. */
+html.reinbox.ri-drawer-open .ri-fab {
+  display: none;
 }

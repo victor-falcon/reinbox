@@ -176,15 +176,29 @@ html.reinbox.ri-dark [data-ri-toolbar] .aqJ img {
 
 /* ---- List: no toolbar, just pagination and refresh on the heading line -- */
 
+/* Its own quiet row above the list: overlaying it on the first heading broke
+   views whose first row has no heading (search) or that stack Gmail's
+   filter chips and notices in the same toolbar (Sent, Trash). Sticky, so it
+   keeps the page background over rows scrolling under it. */
 html.reinbox [data-ri-toolbar]:is([data-ri-toolbar="list"], [data-ri-toolbar="select"]) {
   z-index: 2;
-  height: 0;
-  overflow: visible;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Gmail fixes it at 88px; with the filters and the pagination on one row
+     it is shorter, and with notices it would be taller. */
+  height: auto !important;
+  padding-block: 4px;
+  background: var(--ri-bg);
+}
+
+/* Search views: the Filters button on the left, pagination on the right. */
+html.reinbox [data-ri-toolbar]:is([data-ri-toolbar="list"], [data-ri-toolbar="select"]) > .aqK {
+  flex: 1 0 auto;
 }
 
 html.reinbox [data-ri-toolbar]:is([data-ri-toolbar="list"], [data-ri-toolbar="select"]) > .aqK {
-  position: relative;
-  top: 22px;
+  min-height: 44px;
 }
 
 /* The floating bar lives inside the toolbar's stacking context: lift it over
@@ -302,6 +316,11 @@ html.reinbox .ri-selection-clear:focus-visible {
   outline-offset: 2px;
 }
 
+/* Room below the last row so the floating bar never covers it. */
+html.reinbox.ri-selection [role=main] table:has(> tbody > tr.zA) {
+  padding-bottom: 104px;
+}
+
 /* The floating bar and the compose button share the bottom edge. */
 html.reinbox.ri-selection .ri-fab {
   display: none;
@@ -310,8 +329,10 @@ html.reinbox.ri-selection .ri-fab {
 /* ---- Thread: back on the left, actions in a capsule on the right ------- */
 
 /* Gmail's thread toolbar has no .aqK row: the button group and the
-   "1 of 5" pagination (.adF) are direct children. */
+   "1 of 5" pagination (.adF) are direct children. It sticks while the
+   thread scrolls, so it needs an opaque background. */
 html.reinbox [data-ri-toolbar="thread"] {
+  background: var(--ri-bg);
   display: flex;
   align-items: center;
   justify-content: flex-end;
