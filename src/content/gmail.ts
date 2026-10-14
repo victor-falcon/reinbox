@@ -40,6 +40,21 @@ export const SELECTORS = {
   rowMarkUnread: "td.bq4 li.bqX.SHFPQe",
   rowSnooze: "td.bq4 li.bqX.brv",
 
+  // Conversation view. `act` ids are Gmail's toolbar command ids: 19 is
+  // "Back to <label>", which only the thread toolbar has; 7 is Archive.
+  // conversation.css mirrors these and also styles the thread's inner parts
+  // (.aHU message list, .gE header, .gD sender, .g3 date, .amn reply bar).
+  threadToolbar: "[gh=mtb]",
+  threadBack: "[gh=mtb] [act='19']",
+  threadArchive: "[act='7']",
+  thread: "[role=main] .a98",
+  threadSubject: "h2.hP",
+
+  // Compose: the floating dialog and the inline reply share `.aoI`; the dialog
+  // is the `[role=dialog]` around it. `.aoO` is Send.
+  compose: ".aoI",
+  composeSend: ".aoO[role=button]",
+
   // Rendered email content: never restyle fonts inside these.
   messageBody: ".a3s",
   composeBody: ".editable",

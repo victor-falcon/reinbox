@@ -1,1 +1,356 @@
-/* Owned by T4. */
+/* Conversation view and compose window. Gmail hooks: src/content/gmail.ts
+   (thread*, compose*, messageBody). conversation.ts adds `data-ri-done` to
+   the thread's Archive button and `data-ri-body` to each email body. */
+
+html.reinbox {
+  /* Email bodies with their own colors stay on a light "paper" sheet in dark
+     mode: senders design for white, and recoloring their HTML breaks logos,
+     tables and contrast. These two stay light in both schemes on purpose. */
+  --ri-paper: #ffffff;
+  --ri-paper-text: #1c1a17;
+  /* Text on accent fills: white on the light accent, dark on the dark one. */
+  --ri-on-accent: #ffffff;
+  --ri-thread-column: 760px;
+  --ri-check-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+
+html.reinbox.ri-dark {
+  --ri-on-accent: var(--ri-bg);
+}
+
+/* ---------- Thread toolbar ---------- */
+
+/* Same column as the thread below it. */
+html.reinbox [gh=tm]:has([act="19"]) {
+  /* The thread adds 16px of its own padding inside the column. */
+  padding-inline: max(16px, calc((100% - var(--ri-thread-column)) / 2 + 16px));
+  background: transparent;
+}
+
+html.reinbox [gh=mtb]:has([act="19"]) .T-I {
+  color: var(--ri-text2);
+  border-radius: var(--ri-radius-button);
+}
+
+/* Text labels (Gmail's "button labels: text" setting). */
+html.reinbox [gh=mtb]:has([act="19"]) .T-I .Bn {
+  color: inherit;
+}
+
+/* Icon labels are dark sprites. */
+html.reinbox.ri-dark [gh=mtb]:has([act="19"]) .T-I .asa {
+  filter: invert(0.85);
+}
+
+html.reinbox [gh=mtb]:has([act="19"]) .T-I:hover {
+  background: var(--ri-hover);
+  box-shadow: none;
+}
+
+/* Archive becomes Done: an accent pill with a check, like the list rows. */
+html.reinbox [data-ri-done] {
+  /* No !important: Gmail hides actions that don't apply with inline styles. */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  /* Keeps the toolbar's line box: text-label buttons are only 20px tall. */
+  margin: -8px 8px -8px 4px;
+  padding: 0 14px 0 12px !important;
+  border: 0 !important;
+  border-radius: var(--ri-radius-button) !important;
+  background: var(--ri-accent) !important;
+  color: var(--ri-on-accent) !important;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html.reinbox [data-ri-done]:hover {
+  background: var(--ri-accent) !important;
+  filter: brightness(1.08);
+}
+
+html.reinbox [data-ri-done]:focus-visible {
+  outline: 2px solid var(--ri-text);
+  outline-offset: 2px;
+}
+
+html.reinbox [data-ri-done] > * {
+  display: none !important;
+}
+
+html.reinbox [data-ri-done]::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: var(--ri-check-icon) center / contain no-repeat;
+  mask: var(--ri-check-icon) center / contain no-repeat;
+}
+
+html.reinbox [data-ri-done]::after {
+  content: attr(data-ri-done);
+}
+
+/* ---------- Thread column ---------- */
+
+html.reinbox [role=main] .a98 {
+  max-width: var(--ri-thread-column);
+  margin-inline: auto;
+  padding-inline: 16px;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+/* Subject row: Gmail indents it by the avatar column; Focus aligns it with
+   the card. */
+html.reinbox [role=main] .a98 .ha {
+  margin-left: 4px;
+  padding-block: 12px 16px;
+}
+
+html.reinbox [role=main] h2.hP {
+  color: var(--ri-text);
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Label chips next to the subject. */
+html.reinbox [role=main] .ahR .hN {
+  border-radius: 8px;
+  background: var(--ri-surface2);
+  color: var(--ri-text2);
+}
+
+/* The thread is one card; messages are separated by a hairline. */
+html.reinbox [role=main] .a98 .aHU {
+  margin: 0;
+  padding: 8px 20px 8px 4px;
+  border: 1px solid var(--ri-border);
+  border-radius: var(--ri-radius-card);
+  background: var(--ri-surface);
+  box-shadow: var(--ri-shadow);
+}
+
+html.reinbox [role=main] .a98 .aHU [role=listitem] {
+  background: transparent;
+  border: 0;
+}
+
+html.reinbox [role=main] .a98 .aHU [role=listitem] + [role=listitem] {
+  border-top: 1px solid var(--ri-border);
+}
+
+/* Gmail paints expanded and collapsed messages white. */
+html.reinbox [role=main] .a98 :is(.adn, .kv, .kQ, .h7, .Bk, .G3, .G2) {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* Collapsed messages: one quiet line each. */
+html.reinbox [role=main] .a98 :is(.kv, .kQ) .iA {
+  color: var(--ri-text2);
+}
+
+/* "N older messages" divider. */
+html.reinbox [role=main] .a98 .adv {
+  color: var(--ri-text2);
+}
+
+/* ---------- Message header ---------- */
+
+html.reinbox [role=main] .a98 .gD {
+  color: var(--ri-text);
+  font-weight: 600;
+}
+
+html.reinbox [role=main] .a98 :is(.go, .g3, .ajw, .hb, .g2) {
+  color: var(--ri-text3);
+}
+
+/* Star, reaction, reply, more, print: quiet icon buttons. Their SVGs follow
+   currentColor once Gmail's per-part colors are dropped. */
+html.reinbox [role=main] .a98 :is(.gE, .bHJ) :is(button, [role=button]),
+html.reinbox [role=main] .a98 :is(.gE, .bHJ) :is(button, [role=button]) * {
+  color: var(--ri-text2);
+}
+
+/* The star is a sprite image; a starred one keeps its color. */
+html.reinbox.ri-dark [role=main] .a98 .gE .T-KT:not(.T-KT-Jp) img {
+  filter: invert(0.85);
+}
+
+/* ---------- Email bodies ---------- */
+
+/* Bodies keep the sender's HTML. Plain ones follow the theme; rich ones get
+   a paper sheet in dark mode only (see --ri-paper). */
+html.reinbox .a3s[data-ri-body=plain] {
+  color: var(--ri-text);
+}
+
+html.reinbox .a3s[data-ri-body=plain] a {
+  color: var(--ri-accent);
+}
+
+html.reinbox.ri-dark .a3s[data-ri-body=rich] {
+  padding: 16px;
+  border-radius: var(--ri-radius-button-lg);
+  background: var(--ri-paper);
+  color: var(--ri-paper-text);
+  color-scheme: light;
+}
+
+/* Trimmed-content toggle ("…"). */
+html.reinbox .a3s .ajR,
+html.reinbox .a3s .ajT {
+  background-color: var(--ri-surface2);
+  border-color: var(--ri-border);
+  border-radius: 8px;
+}
+
+/* ---------- Reply / forward ---------- */
+
+/* Gmail keeps this bar sticky at the bottom of the thread. */
+html.reinbox [role=main] .a98 .btDi4d {
+  background: var(--ri-bg);
+  box-shadow: none;
+}
+
+html.reinbox [role=main] .a98 .btDi4d .nr {
+  background: transparent;
+}
+
+html.reinbox [role=main] .amn .ams {
+  height: 40px;
+  padding-inline: 14px 18px;
+  border: 1px solid var(--ri-border);
+  border-radius: 999px;
+  background-color: var(--ri-surface);
+  color: var(--ri-text);
+  font-weight: 600;
+  line-height: 38px;
+  box-shadow: none;
+}
+
+html.reinbox [role=main] .amn .ams:hover {
+  background-color: var(--ri-hover);
+}
+
+html.reinbox.ri-dark [role=main] .amn .ams::before {
+  filter: invert(1);
+}
+
+/* ---------- Compose (dialog and inline reply) ---------- */
+
+/* No overflow clipping: autocomplete and toolbar menus open inside it. The
+   header carries the top radius instead. */
+html.reinbox [role=dialog]:has(.aoI) {
+  border-radius: var(--ri-radius-card) var(--ri-radius-card) 0 0;
+  background: var(--ri-surface);
+  box-shadow: var(--ri-fab-shadow);
+}
+
+/* Header bar. */
+html.reinbox [role=dialog]:has(.aoI) .Hy {
+  border-radius: var(--ri-radius-card) var(--ri-radius-card) 0 0;
+  background: var(--ri-surface2);
+}
+
+/* Gmail paints the header on an inner wrapper. */
+html.reinbox [role=dialog]:has(.aoI) .Hy :is(div, table, td) {
+  background: transparent;
+}
+
+html.reinbox [role=dialog]:has(.aoI) .Hy h2,
+html.reinbox [role=dialog]:has(.aoI) .Hy .Hm button,
+html.reinbox [role=dialog]:has(.aoI) .Hy .Hm button * {
+  color: var(--ri-text);
+}
+
+html.reinbox [role=dialog]:has(.aoI) .Hy h2 {
+  font-weight: 600;
+}
+
+html.reinbox :is([role=dialog], [role=main]) .aaZ,
+html.reinbox .aoI .Ap,
+html.reinbox .aoI .aDj {
+  background: var(--ri-surface);
+}
+
+/* Recipients and subject: borderless inputs, hairline separators. */
+html.reinbox .aoI :is(.fX, .aoD) {
+  border-bottom: 1px solid var(--ri-border);
+  background: transparent;
+  color: var(--ri-text);
+}
+
+/* The recipients input wrapper is white. */
+html.reinbox .aoI .aGb,
+html.reinbox .aoI :is(input, textarea) {
+  background: transparent;
+  color: var(--ri-text);
+}
+
+html.reinbox .aoI :is(input, textarea)::placeholder {
+  color: var(--ri-text3);
+  opacity: 1;
+}
+
+/* "To", "Cc", "Bcc" and other field labels. */
+html.reinbox .aoI :is(.gO, .aB, .oL) {
+  color: var(--ri-text3);
+}
+
+html.reinbox .aoI .editable {
+  color: var(--ri-text);
+  caret-color: var(--ri-accent);
+}
+
+/* Send: an accent pill. Gmail splits it from the schedule arrow (`.hG`). */
+html.reinbox .aoI .aoO[role=button],
+html.reinbox .aoI .aoO[role=button] + .hG {
+  height: 38px;
+  border: 0;
+  background: var(--ri-accent);
+  color: var(--ri-on-accent);
+  font-weight: 600;
+  box-shadow: none;
+}
+
+html.reinbox .aoI .aoO[role=button] {
+  padding-inline: 20px;
+  border-radius: var(--ri-radius-button);
+}
+
+html.reinbox .aoI .aoO[role=button]:has(+ .hG) {
+  border-radius: var(--ri-radius-button) 0 0 var(--ri-radius-button);
+}
+
+html.reinbox .aoI .aoO[role=button] + .hG {
+  margin-left: 1px;
+  border-radius: 0 var(--ri-radius-button) var(--ri-radius-button) 0;
+}
+
+html.reinbox .aoI :is(.aoO[role=button], .aoO[role=button] + .hG):hover {
+  background: var(--ri-accent);
+  filter: brightness(1.08);
+  box-shadow: none;
+}
+
+/* Formatting toolbar icons are dark sprites; lighten them in dark mode. The
+   first cell is Send, whose arrow is already light. */
+html.reinbox.ri-dark .aoI tr.btC > td:not(:first-child) :is(.aaA, .dv, .og, .J-JN-M-I-JG, img) {
+  filter: invert(0.85);
+}
+
+/* The inline reply is its own card inside the thread. */
+html.reinbox [role=main] .aoI {
+  border: 1px solid var(--ri-border);
+  border-radius: var(--ri-radius-card);
+  background: var(--ri-surface);
+}
