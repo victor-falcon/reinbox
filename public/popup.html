@@ -1,11 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html class="reinbox">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
 <title>Reinbox</title>
+<link rel="stylesheet" href="popup.css">
 </head>
 <body>
-<p>Reinbox</p>
+<main class="popup">
+  <header class="popup-header">
+    <img class="popup-icon" src="icons/icon-48.png" width="28" height="28" alt="">
+    <h1 class="popup-wordmark">Reinbox</h1>
+    <span class="popup-version" id="version"></span>
+  </header>
+
+  <section class="popup-card">
+    <label class="popup-row" for="enabled">
+      <span class="popup-row-text">
+        <span class="popup-label" data-i18n="popupEnable"></span>
+        <span class="popup-hint" data-i18n="popupEnableHint"></span>
+      </span>
+      <input class="popup-switch" id="enabled" type="checkbox" role="switch">
+    </label>
+
+    <fieldset class="popup-row popup-theme">
+      <legend class="popup-label" data-i18n="popupTheme"></legend>
+      <div class="popup-segmented">
+        <label><input type="radio" name="theme" value="auto"><span data-i18n="popupThemeAuto"></span></label>
+        <label><input type="radio" name="theme" value="light"><span data-i18n="popupThemeLight"></span></label>
+        <label><input type="radio" name="theme" value="dark"><span data-i18n="popupThemeDark"></span></label>
+      </div>
+    </fieldset>
+  </section>
+
+  <footer class="popup-footer">
+    <a href="https://github.com/victor-falcon/reinbox" target="_blank" rel="noopener" data-i18n="popupSource"></a>
+  </footer>
+</main>
 <script src="popup.js"></script>
 </body>
 </html>

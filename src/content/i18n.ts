@@ -14,6 +14,13 @@ const en = {
   today: "Today",
   yesterday: "Yesterday",
   thisMonth: "This month",
+  popupEnable: "Enable Reinbox",
+  popupEnableHint: "Restyle Gmail with the Focus design",
+  popupTheme: "Theme",
+  popupThemeAuto: "Auto",
+  popupThemeLight: "Light",
+  popupThemeDark: "Dark",
+  popupSource: "Source code on GitHub",
 };
 
 export type MessageKey = keyof typeof en;
@@ -34,12 +41,19 @@ const es: Record<MessageKey, string> = {
   today: "Hoy",
   yesterday: "Ayer",
   thisMonth: "Este mes",
+  popupEnable: "Activar Reinbox",
+  popupEnableHint: "Aplica el diseño Focus a Gmail",
+  popupTheme: "Tema",
+  popupThemeAuto: "Auto",
+  popupThemeLight: "Claro",
+  popupThemeDark: "Oscuro",
+  popupSource: "Código fuente en GitHub",
 };
 
 const dictionaries: Record<string, Record<MessageKey, string>> = { en, es };
 
 // Gmail sets <html lang> to its UI language, which may differ from the browser's.
-function language(): string {
+export function language(): string {
   for (const tag of [document.documentElement.lang, navigator.language]) {
     const base = tag?.toLowerCase().split("-")[0];
     if (base && Object.hasOwn(dictionaries, base)) return base;

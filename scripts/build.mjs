@@ -31,7 +31,7 @@ const options = {
 
 // CSS is bundled separately so the manifest can inject it at document_start.
 const cssOptions = {
-  entryPoints: { content: "src/styles/index.css" },
+  entryPoints: { content: "src/styles/index.css", popup: "src/popup/popup.css" },
   bundle: true,
   outdir: "dist",
   logLevel: "info",
