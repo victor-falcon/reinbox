@@ -1,0 +1,199 @@
+/* Search refinement chips, Focus "floating" design (docs/design/toolbar).
+   filters.ts adds a "Filters (n)" toggle, marks active chips with
+   `data-ri-active` and the bar with `.ri-filters-open` while the menu shows.
+   Collapsed: the toggle plus the active chips. Open: every chip as a row in
+   a menu card. Gmail's chip markup: .H1 is the outline/fill layer, .HY the
+   content, .H5 the label. */
+
+html.reinbox [role=main] [role=toolbar].G6 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding-inline: var(--ri-tb-inset);
+  box-sizing: border-box;
+  background: transparent;
+}
+
+html.reinbox [role=main] [role=toolbar].G6 .Ii {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Horizontal scroll arrows: nothing overflows any more. */
+html.reinbox [role=main] [role=toolbar].G6 .a5B {
+  display: none !important;
+}
+
+/* ---- Toggle ---------------------------------------------------------- */
+
+html.reinbox .ri-filters-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px 0 10px;
+  border: 1px solid var(--ri-border);
+  border-radius: var(--ri-radius-button);
+  background: var(--ri-surface);
+  color: var(--ri-text);
+  font: 600 14px var(--ri-font);
+  cursor: pointer;
+}
+
+html.reinbox .ri-filters-toggle::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: var(--ri-i-sliders) center / contain no-repeat;
+  mask: var(--ri-i-sliders) center / contain no-repeat;
+}
+
+html.reinbox .ri-filters-toggle:hover {
+  background: var(--ri-hover);
+}
+
+html.reinbox .ri-filters-toggle:focus-visible {
+  outline: 2px solid var(--ri-accent);
+  outline-offset: 2px;
+}
+
+html.reinbox .ri-filters-count:empty {
+  display: none;
+}
+
+html.reinbox .ri-filters-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--ri-accent);
+  color: var(--ri-on-accent);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* ---- Chips: shared ---------------------------------------------------- */
+
+html.reinbox [role=toolbar].G6 [role=button][data-type] {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ri-text2);
+  font-family: var(--ri-font);
+  box-sizing: border-box;
+}
+
+html.reinbox [role=toolbar].G6 [role=button][data-type] .HY {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+html.reinbox [role=toolbar].G6 [role=button][data-type] .H1 {
+  border: 0 !important;
+  border-radius: inherit;
+  background: transparent !important;
+}
+
+html.reinbox [role=toolbar].G6 [role=button][data-type] :is(.H5, .Og) {
+  color: inherit !important;
+  font: 600 13px var(--ri-font) !important;
+}
+
+html.reinbox [role=toolbar].G6 [role=button][data-type] svg {
+  fill: currentColor;
+}
+
+/* Active filters read as accent chips, collapsed or in the menu. */
+html.reinbox [role=toolbar].G6 :is([data-ri-active][role=button], [data-ri-active] > [role=button]) {
+  background: var(--ri-accent-soft) !important;
+  color: var(--ri-accent) !important;
+}
+
+/* ---- Collapsed: only the active chips --------------------------------- */
+
+html.reinbox [role=toolbar].G6:not(.ri-filters-open) .a5E > :not([data-ri-active]) {
+  display: none !important;
+}
+
+html.reinbox [role=toolbar].G6:not(.ri-filters-open) .a5E {
+  display: flex;
+  gap: 8px;
+}
+
+/* ---- Open: every chip as a row in a menu card ------------------------- */
+
+html.reinbox [role=toolbar].G6.ri-filters-open .Ii {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: var(--ri-tb-inset);
+  z-index: 5;
+  width: 300px;
+  padding: 6px;
+  border: 1px solid var(--ri-border);
+  border-radius: 18px;
+  background: var(--ri-surface);
+  box-shadow: var(--ri-fab-shadow);
+  box-sizing: border-box;
+}
+
+html.reinbox [role=toolbar].G6.ri-filters-open :is(.a5C, .Im) {
+  width: 100% !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+html.reinbox [role=toolbar].G6.ri-filters-open .a5E {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  width: 100% !important;
+  transform: none !important;
+}
+
+html.reinbox [role=toolbar].G6.ri-filters-open .a5E > * {
+  display: flex !important;
+  width: 100% !important;
+  margin: 0 !important;
+  box-sizing: border-box;
+}
+
+html.reinbox [role=toolbar].G6.ri-filters-open [role=button][data-type] {
+  flex: 1;
+  width: 100% !important;
+  justify-content: flex-start;
+  height: 44px;
+  padding: 0 6px;
+  border-radius: 12px;
+  color: var(--ri-text);
+}
+
+html.reinbox [role=toolbar].G6.ri-filters-open [role=button][data-type] .HY {
+  flex: 1;
+  justify-content: space-between;
+}
+
+html.reinbox [role=toolbar].G6.ri-filters-open [role=button][data-type]:hover {
+  background: var(--ri-hover) !important;
+}
+
+/* Advanced search: last, separated, quieter. */
+html.reinbox [role=toolbar].G6.ri-filters-open [data-type="RLrFpb"] {
+  margin-top: 4px !important;
+  border-top: 1px solid var(--ri-border);
+  border-radius: 0 0 12px 12px;
+  color: var(--ri-text2);
+}

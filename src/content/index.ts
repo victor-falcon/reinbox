@@ -1,4 +1,5 @@
 import * as conversation from "./features/conversation";
+import * as filters from "./features/filters";
 import * as list from "./features/list";
 import * as shell from "./features/shell";
 import * as toolbar from "./features/toolbar";
@@ -15,7 +16,7 @@ const DARK_CLASS = "ri-dark";
 // apply them synchronously at document_start instead of after an async read.
 const CACHE_KEY = "reinbox:prefs";
 
-const FEATURES: Feature[] = [shell, list, conversation, toolbar];
+const FEATURES: Feature[] = [shell, list, conversation, toolbar, filters];
 
 const darkQuery = matchMedia("(prefers-color-scheme: dark)");
 let prefs: Prefs | undefined;
