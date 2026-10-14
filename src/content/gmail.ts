@@ -36,6 +36,7 @@ export const SELECTORS = {
   rowHoverActions: "td.bq4 li.bqX",
   rowArchive: "td.bq4 li.bqX.brq",
   rowDelete: "td.bq4 li.bqX.bru",
+  rowMarkRead: "td.bq4 li.bqX.brr",
   rowMarkUnread: "td.bq4 li.bqX.SHFPQe",
   rowSnooze: "td.bq4 li.bqX.brv",
 
