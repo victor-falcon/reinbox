@@ -15,6 +15,12 @@ export const SELECTORS = {
   composeButton: ".T-I.T-I-KE.L3",
   main: "[role=main]",
   toolbar: "[gh=tm]",
+  // Toolbar buttons sit one level inside Gmail's button groups (`.G-Ni`);
+  // `.G-tF` holds all the groups, `[role=checkbox]` is the select-all box.
+  toolbarButton: ".G-Ni > [role=button]",
+  toolbarActions: ".G-tF",
+  toolbarCheckbox: "[role=checkbox]",
+  selectedRow: "[role=main] tr.zA.x7",
   rightPanel: ".bAw",
   // Page footer: storage meter, terms and last account activity.
   footer: ".aeG",
@@ -46,13 +52,12 @@ export const SELECTORS = {
   rowMarkUnread: "td.bq4 li.bqX.SHFPQe",
   rowSnooze: "td.bq4 li.bqX.brv",
 
-  // Conversation view. `act` ids are Gmail's toolbar command ids: 19 is
-  // "Back to <label>", which only the thread toolbar has; 7 is Archive.
-  // conversation.css mirrors these and also styles the thread's inner parts
-  // (.aHU message list, .gE header, .gD sender, .g3 date, .amn reply bar).
+  // Conversation view. `act` ids are Gmail's toolbar command ids (toolbar.ts
+  // maps them); 19 is "Back to <label>", which only the thread toolbar has.
+  // conversation.css styles the thread's inner parts (.aHU message list,
+  // .gE header, .gD sender, .g3 date, .amn reply bar).
   threadToolbar: "[gh=mtb]",
   threadBack: "[gh=mtb] [act='19']",
-  threadArchive: "[act='7']",
   thread: "[role=main] .a98",
   threadSubject: "h2.hP",
 

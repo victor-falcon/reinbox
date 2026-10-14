@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Toolbar · B Floating</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit}a:hover{color:inherit}
+.qb-cap{margin:0 0 10px 4px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}
+.qb-panel{background:var(--bg);border:1px solid var(--border);border-radius:24px;padding:20px 40px 24px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;gap:10px}
+.qb-col{width:100%;max-width:1000px;display:flex;flex-direction:column;gap:6px}
+.qb-ib{width:36px;height:36px;border:0;border-radius:12px;background:transparent;color:var(--text2);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
+.qb-ib svg{width:18px;height:18px}
+.qb-meta{font-size:13px;color:var(--text3);font-weight:500;white-space:nowrap}
+.qb-row{display:flex;gap:14px;padding:12px;border-radius:20px;align-items:flex-start}
+.qb-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.qb-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qb-float{align-self:center;display:flex;align-items:center;gap:2px;padding:6px;border-radius:20px;background:var(--ink);color:var(--inkText);box-shadow:var(--floatShadow);margin-top:10px}
+.qb-fb{height:40px;min-width:40px;border:0;border-radius:14px;background:transparent;color:var(--inkText);display:inline-flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:0 10px}
+.qb-fb svg{width:18px;height:18px}
+.qb-fdone{height:40px;border:0;border-radius:14px;background:var(--accent);color:var(--onAccent);display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:0 14px 0 11px;margin:0 4px}
+.qb-fdone svg{width:16px;height:16px}
+.qb-fdiv{width:1px;height:22px;background:var(--inkDiv);margin:0 6px}
+.qb-cap2{display:flex;align-items:center;gap:2px;padding:4px;border-radius:16px;background:var(--surface2)}
+.qb-tok{height:32px;padding:0 8px 0 12px;border-radius:999px;border:0;background:var(--accentSoft);color:var(--accent);font:inherit;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.qb-tok svg{width:14px;height:14px}
+.qb-opt{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:12px;color:var(--text);font-weight:500}
+</style>
+</helmet>
+<div style="{{ c.vars }} width: 1200px; min-height: 1720px; box-sizing: border-box; padding: 40px; background: var(--canvas); color: var(--text); font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column; gap: 36px">
+
+  <section>
+    <h3 class="qb-cap">1 · List — nothing selected (no toolbar)</h3>
+    <div class="qb-panel">
+      <div class="qb-col">
+        <div style="display: flex; align-items: center; gap: 8px; margin: 6px 12px 2px">
+          <h2 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Today</h2>
+          <span style="color: var(--text3); font-size: 13px; font-weight: 500; margin-left: 4px">Wednesday, October 14</span>
+          <span style="flex: 1"></span>
+          <span class="qb-meta">1–5 of 5</span>
+          <button class="qb-ib" aria-label="Newer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.chevL }}"></path></svg></button>
+          <button class="qb-ib" aria-label="Older"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.chevR }}"></path></svg></button>
+          <button class="qb-ib" aria-label="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.refresh }}"></path></svg></button>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="2">
+          <div class="qb-row">
+            <div class="qb-av" style="background: {{ r.avBg }}; color: {{ r.avFg }}">{{ r.init }}</div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+              <div style="display: flex; gap: 8px"><span style="font-weight: 700">{{ r.name }}</span><span style="flex: 1"></span><span style="font-size: 12px; color: var(--text3)">{{ r.time }}</span></div>
+              <div class="qb-line" style="font-weight: 600">{{ r.subject }}</div>
+              <div class="qb-line" style="color: var(--text2)">{{ r.snippet }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="qb-cap">2 · List — 2 selected (floating bar)</h3>
+    <div class="qb-panel">
+      <div class="qb-col">
+        <div style="display: flex; align-items: center; gap: 8px; margin: 6px 12px 2px">
+          <h2 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Today</h2>
+        </div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="2">
+          <div class="qb-row" style="background: var(--accentSoft)">
+            <div class="qb-av" style="background: var(--accent); color: var(--onAccent)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.check }}"></path></svg></div>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+              <div style="display: flex; gap: 8px"><span style="font-weight: 700">{{ r.name }}</span><span style="flex: 1"></span><span style="font-size: 12px; color: var(--text3)">{{ r.time }}</span></div>
+              <div class="qb-line" style="font-weight: 600">{{ r.subject }}</div>
+              <div class="qb-line" style="color: var(--text2)">{{ r.snippet }}</div>
+            </div>
+          </div>
+        </sc-for>
+        <div class="qb-float">
+          <button class="qb-fb" aria-label="Clear selection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="{{ I.x }}"></path></svg></button>
+          <span style="font-weight: 700; margin: 0 10px 0 2px">2 selected</span>
+          <button class="qb-fdone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.check }}"></path></svg>Done</button>
+          <button class="qb-fb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.clock }}"></path></svg>Snooze</button>
+          <button class="qb-fb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.move }}"></path></svg>Move</button>
+          <span class="qb-fdiv"></span>
+          <button class="qb-fb" aria-label="Pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.pin }}"></path></svg></button>
+          <button class="qb-fb" aria-label="Labels"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.label }}"></path></svg></button>
+          <button class="qb-fb" aria-label="Mark as unread"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.unread }}"></path></svg></button>
+          <button class="qb-fb" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.trash }}"></path></svg></button>
+          <button class="qb-fb" aria-label="More"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.more }}"></path></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="qb-cap">3 · Conversation (actions beside the subject)</h3>
+    <div class="qb-panel">
+      <div class="qb-col">
+        <div style="display: flex; align-items: center; gap: 12px; margin: 4px 0 10px">
+          <button class="qb-ib" aria-label="Back to Inbox" style="background: var(--surface2); width: 40px; height: 40px; border-radius: 14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.back }}"></path></svg></button>
+          <h2 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; flex: 1; min-width: 0" class="qb-line">Onboarding review</h2>
+          <div class="qb-cap2">
+            <button class="qb-ib" aria-label="Snooze"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.clock }}"></path></svg></button>
+            <button class="qb-ib" aria-label="Pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.pin }}"></path></svg></button>
+            <button class="qb-ib" aria-label="Move to"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.move }}"></path></svg></button>
+            <button class="qb-ib" aria-label="Labels"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.label }}"></path></svg></button>
+            <button class="qb-ib" aria-label="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.trash }}"></path></svg></button>
+            <button class="qb-ib" aria-label="More: unread, spam, print, new window, Tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.more }}"></path></svg></button>
+            <button class="qb-ib" aria-label="Done" style="background: var(--accent); color: var(--onAccent); margin-left: 2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.check }}"></path></svg></button>
+          </div>
+          <div style="display: flex; align-items: center">
+            <button class="qb-ib" aria-label="Newer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.chevL }}"></path></svg></button>
+            <span class="qb-meta">1/5</span>
+            <button class="qb-ib" aria-label="Older"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.chevR }}"></path></svg></button>
+          </div>
+        </div>
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 18px 20px; display: flex; gap: 14px; align-items: center">
+          <div class="qb-av" style="background: {{ lm.avBg }}; color: {{ lm.avFg }}">LM</div>
+          <div style="flex: 1; min-width: 0"><div style="font-weight: 700">Laura Martín</div><div style="font-size: 12px; color: var(--text3)">to me</div></div>
+          <span style="font-size: 12px; color: var(--text3)">10:42 (1 hour ago)</span>
+          <button class="qb-ib" aria-label="Reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.reply }}"></path></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="qb-cap">4 · Search — filters in one menu</h3>
+    <div class="qb-panel">
+      <div class="qb-col">
+        <div style="display: flex; align-items: center; gap: 8px; margin: 2px 0 4px">
+          <button style="height: 36px; padding: 0 12px 0 10px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); font: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; cursor: pointer" aria-expanded="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.sliders }}"></path></svg>
+            Filters
+            <span style="min-width: 18px; height: 18px; border-radius: 9px; background: var(--accent); color: var(--onAccent); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center">1</span>
+          </button>
+          <button class="qb-tok" aria-label="Remove filter From: Laura">From: Laura<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="{{ I.x }}"></path></svg></button>
+          <span style="flex: 1"></span>
+          <span class="qb-meta">2 results</span>
+        </div>
+        <div style="width: 300px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--floatShadow); padding: 6px">
+          <div class="qb-opt" style="background: var(--accentSoft)"><span style="flex: 1">From</span><span style="color: var(--accent); font-weight: 600">Laura</span></div>
+          <div class="qb-opt"><span style="flex: 1">To</span><span style="color: var(--text3)">Anyone</span></div>
+          <div class="qb-opt"><span style="flex: 1">Date</span><span style="color: var(--text3)">Any time</span></div>
+          <label class="qb-opt"><span style="flex: 1">Has attachment</span><input type="checkbox"></label>
+          <label class="qb-opt"><span style="flex: 1">Unread only</span><input type="checkbox"></label>
+          <div style="height: 1px; background: var(--border); margin: 4px 8px"></div>
+          <a href="#" class="qb-opt" style="text-decoration: none; color: var(--text2)">Advanced search…</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h3 class="qb-cap">5 · Trash — 1 selected</h3>
+    <div class="qb-panel">
+      <div class="qb-col">
+        <div style="display: flex; align-items: baseline; gap: 10px; margin: 6px 12px 2px">
+          <h2 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em">Trash</h2>
+          <span style="color: var(--text3); font-size: 13px">Deleted forever after 30 days ·</span>
+          <button style="border: 0; background: transparent; color: var(--accent); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; padding: 0">Empty now</button>
+        </div>
+        <div class="qb-row" style="background: var(--accentSoft)">
+          <div class="qb-av" style="background: var(--accent); color: var(--onAccent)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.check }}"></path></svg></div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+            <div style="display: flex; gap: 8px"><span style="font-weight: 700">Notion</span><span style="flex: 1"></span><span style="font-size: 12px; color: var(--text3)">Oct 3</span></div>
+            <div class="qb-line" style="font-weight: 600">New templates for your team</div>
+            <div class="qb-line" style="color: var(--text2)">Start the quarter with planning templates built by the community</div>
+          </div>
+        </div>
+        <div class="qb-float">
+          <button class="qb-fb" aria-label="Clear selection"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="{{ I.x }}"></path></svg></button>
+          <span style="font-weight: 700; margin: 0 10px 0 2px">1 selected</span>
+          <button class="qb-fb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.restore }}"></path></svg>Restore</button>
+          <button class="qb-fb" style="color: var(--dangerOnInk)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ I.trash }}"></path></svg>Delete forever</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":1200,"height":1720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const t = dark
+      ? { canvas: '#0B0A09', bg: '#121110', surface: '#1C1B19', surface2: '#24221F', border: '#2C2A27', text: '#F0EDE8', text2: '#B3AEA6', text3: '#8F8A82', accent: '#F28B4B', accentSoft: '#3A2416', onAccent: '#1C1A17', ink: '#F0EDE8', inkText: '#1C1A17', inkDiv: 'rgba(28,26,23,0.18)', dangerOnInk: '#B42318', floatShadow: '0 12px 32px rgba(0,0,0,0.55)' }
+      : { canvas: '#EFECE7', bg: '#FBFAF8', surface: '#FFFFFF', surface2: '#F1EFEB', border: '#E9E6E1', text: '#1C1A17', text2: '#5E5A53', text3: '#77726A', accent: '#C2410C', accentSoft: '#FCEBDF', onAccent: '#FFFFFF', ink: '#1C1A17', inkText: '#F0EDE8', inkDiv: 'rgba(240,237,232,0.2)', dangerOnInk: '#F97066', floatShadow: '0 12px 28px rgba(28,26,23,0.25)' };
+    const vars = Object.entries(t).map(([k, v]) => `--${k}: ${v};`).join(' ');
+    const av = (l, d) => (dark ? d : l);
+    const rows = [
+      { init: 'LM', name: 'Laura Martín', subject: 'Onboarding review', snippet: "Here are my notes on the new flow before Thursday's demo", time: '10:42', avBg: av('#FCEBDF', '#3A2416'), avFg: av('#C2410C', '#F6B48A') },
+      { init: 'GH', name: 'GitHub', subject: '[reinbox] New issue: dark mode in conversations', snippet: 'The conversation background does not follow the system theme', time: '9:15', avBg: av('#EEECE8', '#2C2A27'), avFg: av('#3D3A35', '#DAD5CD') },
+    ];
+    return {
+      c: { vars },
+      lm: rows[0],
+      rows,
+      I: {
+        refresh: 'M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5',
+        chevL: 'M15 6l-6 6 6 6', chevR: 'M9 6l6 6-6 6',
+        check: 'M5 12.5l4.5 4.5L19 7.5',
+        clock: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM12 8v4l3 2',
+        pin: 'M9 4h6l-1 5 3 3H7l3-3zM12 12v8',
+        move: 'M4 7h6l2 2h8v9H4zM12 11v5M10 14l2 2 2-2',
+        label: 'M4 4h8l8 8-8 8-8-8zM8.5 8.5h.01',
+        unread: 'M4 6h16v12H4zM4 7l8 6 8-6',
+        trash: 'M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12',
+        more: 'M6 12h.01M12 12h.01M18 12h.01',
+        back: 'M19 12H5M11 6l-6 6 6 6',
+        reply: 'M10 8l-5 4 5 4M5 12h9a5 5 0 0 1 5 5v1',
+        x: 'M7 7l10 10M17 7L7 17',
+        sliders: 'M4 7h10M18 7h2M4 17h4M12 17h8M16 5v4M10 15v4',
+        restore: 'M9 14l-4-4 4-4M5 10h9a5 5 0 0 1 0 10h-3',
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
