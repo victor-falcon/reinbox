@@ -34,22 +34,38 @@ function labelWidth(row: HTMLElement, label: string): string | undefined {
   return width;
 }
 
-function groupRows(rows: HTMLElement[], now: Date, lang: string): void {
-  let previous: string | undefined;
-  for (const row of rows) {
-    const title = row.querySelector(SELECTORS.rowDate)?.getAttribute("title");
-    const date = title ? parseGmailDate(title, lang) : undefined;
-    // An unparsable date stays in the previous group.
-    const group = date ? dateGroup(date, now, lang) : undefined;
-    const starts = group !== undefined && group.key !== previous;
-    if (group) previous = group.key;
+function applyGroup(row: HTMLElement, label?: string, sub?: string): void {
+  setAttr(row, GROUP_ATTR, label);
+  const width = label && sub ? labelWidth(row, label) : undefined;
+  setAttr(row, SUB_ATTR, width ? sub : undefined);
+  if (!width) row.style.removeProperty(LABEL_WIDTH);
+  else if (row.style.getPropertyValue(LABEL_WIDTH) !== width) row.style.setProperty(LABEL_WIDTH, width);
+}
 
-    setAttr(row, GROUP_ATTR, starts ? group.label : undefined);
-    const width = starts && group.sub ? labelWidth(row, group.label) : undefined;
-    setAttr(row, SUB_ATTR, width ? group?.sub : undefined);
-    if (!width) row.style.removeProperty(LABEL_WIDTH);
-    else if (row.style.getPropertyValue(LABEL_WIDTH) !== width) row.style.setProperty(LABEL_WIDTH, width);
+function groupRows(rows: HTMLElement[], now: Date, lang: string): void {
+  const dates = rows.map((row) => {
+    const title = row.querySelector(SELECTORS.rowDate)?.getAttribute("title");
+    return title ? parseGmailDate(title, lang) : undefined;
+  });
+  // Headings only make sense for newest-first lists: search results sorted
+  // by relevance (or any other order) get none.
+  let newest = Infinity;
+  let chronological = true;
+  for (const date of dates) {
+    if (!date) continue;
+    if (date.getTime() > newest) chronological = false;
+    newest = date.getTime();
   }
+
+  let previous: string | undefined;
+  rows.forEach((row, i) => {
+    const date = dates[i];
+    // An unparsable date stays in the previous group.
+    const group = chronological && date ? dateGroup(date, now, lang) : undefined;
+    if (!group || group.key === previous) return applyGroup(row);
+    previous = group.key;
+    applyGroup(row, group.label, group.sub);
+  });
 }
 
 function update(): void {
@@ -75,12 +91,15 @@ export function start(): () => void {
     update();
   };
   document.fonts.addEventListener("loadingdone", onFonts);
+  // "Today" moves at midnight: refresh when the user comes back to the tab.
+  document.addEventListener("visibilitychange", update);
   const stop = onDomChange(update);
   update();
 
   return () => {
     stop();
     document.fonts.removeEventListener("loadingdone", onFonts);
+    document.removeEventListener("visibilitychange", update);
     for (const avatar of document.querySelectorAll(`.${AVATAR_CLASS}`)) avatar.remove();
     for (const row of document.querySelectorAll<HTMLElement>(`[${GROUP_ATTR}], [${SUB_ATTR}]`)) {
       row.removeAttribute(GROUP_ATTR);

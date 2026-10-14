@@ -68,7 +68,7 @@ html.reinbox [role=main] tr.zA {
   line-height: 20px;
 }
 
-html.reinbox [role=main] tr.zA + tr.zA {
+html.reinbox [role=main] tr.zA + tr.zA:not([data-ri-group]) {
   margin-top: 4px;
 }
 
@@ -110,7 +110,7 @@ html.reinbox [role=main] tr.zA > td.oZ-x3 {
   position: relative;
   width: 40px;
   height: 40px;
-  margin-right: 14px;
+  margin-inline-end: 14px;
 }
 
 /* Gmail's checkbox, stretched invisibly over the avatar: clicking the avatar
@@ -142,6 +142,14 @@ html.reinbox .ri-avatar {
   line-height: 1;
   user-select: none;
   pointer-events: none;
+}
+
+/* Keyboard focus on the checkbox, and Gmail's j/k cursor row (`.btb`),
+   whose own marker lives in a hidden cell. */
+html.reinbox [role=main] tr.zA > td.oZ-x3:has(:focus-visible) .ri-avatar,
+html.reinbox [role=main] tr.zA.btb .ri-avatar {
+  outline: 2px solid var(--ri-text3);
+  outline-offset: 2px;
 }
 
 html.reinbox [role=main] tr.zA.x7 .ri-avatar {
@@ -206,7 +214,7 @@ html.reinbox [role=main] tr.zA > td.xW {
   grid-column: 6;
   grid-row: 1;
   justify-content: flex-end;
-  padding-left: 12px;
+  padding-inline-start: 12px;
 }
 
 html.reinbox [role=main] tr.zA > td.xW,
@@ -293,7 +301,7 @@ html.reinbox [role=main] tr.zA > td.apU:has(.T-KT-Jp) {
   display: flex;
   grid-column: 3;
   grid-row: 1;
-  margin-left: 6px;
+  margin-inline-start: 6px;
 }
 
 html.reinbox [role=main] tr.zA > td.apU .T-KT {
@@ -334,7 +342,7 @@ html.reinbox [role=main] tr.zA:hover > td.apU:not(:has(.T-KT-Jp)) {
   display: flex;
   grid-column: 5;
   grid-row: 1 / -1;
-  margin-left: 12px;
+  margin-inline-start: 12px;
 }
 
 html.reinbox [role=main] tr.zA:hover > td.apU .T-KT:not(.T-KT-Jp) {
@@ -365,7 +373,8 @@ html.reinbox [role=main] tr.zA:hover > td.bq4 {
   position: static;
   width: auto;
   height: auto;
-  margin: 0 0 0 4px;
+  margin: 0;
+  margin-inline-start: 4px;
   padding: 0;
   border: 0;
   background: none;
@@ -389,13 +398,19 @@ html.reinbox [role=main] tr.zA > td.bq4 li.bqX {
   margin: 0;
   padding: 0;
   border-radius: var(--ri-radius-button);
-  background: var(--ri-surface);
+  background-color: var(--ri-surface);
+  background-position: center;
+  background-repeat: no-repeat;
   opacity: 1;
   cursor: pointer;
 }
 
 /* Gmail uses this ::before for an animated hover circle (hidden, scaled
    down, behind the button); it becomes the icon instead. */
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX:is(.brq, .brv) {
+  background-image: none;
+}
+
 html.reinbox [role=main] tr.zA > td.bq4 li.bqX::before {
   content: "";
   position: static;
@@ -407,18 +422,22 @@ html.reinbox [role=main] tr.zA > td.bq4 li.bqX::before {
   opacity: 1;
   transform: none;
   transition: none;
+  mask: center / contain no-repeat;
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brv::before {
   background: var(--ri-text2);
-  mask: var(--ri-icon-snooze) center / contain no-repeat;
+  mask-image: var(--ri-icon-snooze);
 }
 
 /* Delete and mark read/unread stay in the toolbar and keyboard shortcuts. */
-html.reinbox [role=main] tr.zA > td.bq4 li.bqX:not(.brq, .brv) {
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX:is(.bru, .brr, .SHFPQe) {
   display: none;
 }
 
 html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq {
   order: 1;
-  background: var(--ri-accent);
+  background-color: var(--ri-accent);
 }
 
 html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq::before {
@@ -426,7 +445,7 @@ html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq::before {
   mask-image: var(--ri-icon-check);
 }
 
-html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brv:hover,
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX:not(.brq):hover,
 html.reinbox [role=main] tr.zA:hover > td.apU .T-KT:not(.T-KT-Jp):hover {
   background: var(--ri-surface2);
 }
@@ -439,7 +458,7 @@ html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq:hover {
    Drawn above the first row of each group, in the row's top margin so the
    hover background does not cover them. */
 
-html.reinbox [role=main] tr.zA + tr.zA[data-ri-group] {
+html.reinbox [role=main] tr.zA[data-ri-group] {
   margin-top: 82px;
 }
 
@@ -450,7 +469,7 @@ html.reinbox [role=main] tr.zA[data-ri-group]:first-child {
 html.reinbox [role=main] tr.zA[data-ri-group]::before {
   content: attr(data-ri-group);
   position: absolute;
-  left: 12px;
+  inset-inline-start: 12px;
   bottom: calc(100% + 10px);
   color: var(--ri-text);
   font-size: 28px;
@@ -464,8 +483,7 @@ html.reinbox [role=main] tr.zA[data-ri-group]::before {
 html.reinbox [role=main] tr.zA[data-ri-group-sub]::after {
   content: attr(data-ri-group-sub);
   position: absolute;
-  left: calc(12px + var(--ri-group-w) + 10px);
-  right: 12px;
+  inset-inline: calc(12px + var(--ri-group-w) + 10px) 12px;
   bottom: calc(100% + 16px);
   overflow: hidden;
   color: var(--ri-text3);

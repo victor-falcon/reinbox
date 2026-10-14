@@ -96,14 +96,15 @@ function capitalize(text: string, lang: string): string {
 function computeGroup(date: Date, today: Date, lang: string): DateGroup {
   const days = Math.round((today.getTime() - date.getTime()) / DAY_MS);
   const relative = new Intl.RelativeTimeFormat(lang, { numeric: "auto" });
-  const weekday = new Intl.DateTimeFormat(lang, { weekday: "long", day: "numeric", month: "long" });
 
   // Future dates (scheduled, clock skew) count as today.
-  if (days <= 0) {
-    return { key: "today", label: capitalize(relative.format(0, "day"), lang), sub: weekday.format(date) };
-  }
-  if (days === 1) {
-    return { key: "yesterday", label: capitalize(relative.format(-1, "day"), lang), sub: weekday.format(date) };
+  if (days <= 1) {
+    const offset = days <= 0 ? 0 : -1;
+    return {
+      key: offset === 0 ? "today" : "yesterday",
+      label: capitalize(relative.format(offset, "day"), lang),
+      sub: new Intl.DateTimeFormat(lang, { weekday: "long", day: "numeric", month: "long" }).format(date),
+    };
   }
   if (date.getFullYear() === today.getFullYear() && date.getMonth() === today.getMonth()) {
     return { key: "month", label: capitalize(relative.format(0, "month"), lang) };
