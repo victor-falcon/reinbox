@@ -33,8 +33,9 @@ html.reinbox [role=main] table:has(> tbody > tr.zA) > tbody {
 
 /* Sticky, so it keeps the page background to cover rows scrolling under it.
    Content aligned with the row content (column padding + row padding);
-   padding instead of auto margins because Gmail forces margin-right. */
-html.reinbox [gh=tm] {
+   padding instead of auto margins because Gmail forces margin-right.
+   `[role=main]` outranks Gmail's own toolbar background (`.aeI .wZkTXb .D`). */
+html.reinbox [role=main] [gh=tm] {
   width: auto;
   max-width: none;
   margin-left: 0;
@@ -43,6 +44,11 @@ html.reinbox [gh=tm] {
   border: 0;
   background: var(--ri-bg);
   box-shadow: none;
+}
+
+/* Gmail's white layer behind the sticky toolbar. */
+html.reinbox [role=main] [gh=tm]::after {
+  content: none;
 }
 
 /* ---- Rows ----
@@ -111,6 +117,11 @@ html.reinbox [role=main] tr.zA > td.oZ-x3 {
   width: 40px;
   height: 40px;
   margin-inline-end: 14px;
+}
+
+/* Gmail's drag handle, shown at the cell's corner on hover. */
+html.reinbox [role=main] tr.zA > td.oZ-x3::before {
+  content: none;
 }
 
 /* Gmail's checkbox, stretched invisibly over the avatar: clicking the avatar
