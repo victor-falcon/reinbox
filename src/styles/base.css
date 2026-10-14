@@ -5,7 +5,8 @@ html.reinbox.ri-dark {
   color-scheme: dark;
 }
 
-/* `.wl` is Gmail's full-page background layer (it carries theme images). */
+/* `.wl` is Gmail's full-page background layer; Focus replaces the user's
+   Gmail theme image with the plain token background. */
 html.reinbox,
 html.reinbox body,
 html.reinbox .wl {

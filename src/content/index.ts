@@ -1,7 +1,12 @@
 import * as conversation from "./features/conversation";
 import * as list from "./features/list";
 import * as shell from "./features/shell";
-import { type Prefs, loadPrefs, normalize, onPrefsChange } from "./prefs";
+import { DEFAULT_PREFS, type Prefs, loadPrefs, normalize, onPrefsChange } from "./prefs";
+
+// A feature sets itself up and returns its own cleanup.
+interface Feature {
+  start(): () => void;
+}
 
 const ROOT_CLASS = "reinbox";
 const DARK_CLASS = "ri-dark";
@@ -9,7 +14,7 @@ const DARK_CLASS = "ri-dark";
 // apply them synchronously at document_start instead of after an async read.
 const CACHE_KEY = "reinbox:prefs";
 
-const FEATURES = [shell, list, conversation];
+const FEATURES: Feature[] = [shell, list, conversation];
 
 const darkQuery = matchMedia("(prefers-color-scheme: dark)");
 let prefs: Prefs | undefined;
@@ -64,8 +69,20 @@ function main(): void {
     attributeFilter: ["class"],
   });
 
-  loadPrefs().then(apply);
-  onPrefsChange(apply);
+  // A change event is newer than the initial read, so a late read must not win.
+  let changed = false;
+  onPrefsChange((next) => {
+    changed = true;
+    apply(next);
+  });
+  loadPrefs()
+    .catch((error) => {
+      console.warn("[reinbox] could not read prefs", error);
+      return prefs ?? DEFAULT_PREFS;
+    })
+    .then((loaded) => {
+      if (!changed) apply(loaded);
+    });
 }
 
 main();

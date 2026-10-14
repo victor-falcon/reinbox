@@ -52,12 +52,21 @@ let frame = 0;
 
 function flush(): void {
   frame = 0;
-  for (const cb of [...callbacks]) cb();
+  for (const cb of [...callbacks]) {
+    // One broken feature must not starve the others.
+    try {
+      cb();
+    } catch (error) {
+      console.error("[reinbox]", error);
+    }
+  }
 }
 
 /**
- * Runs `cb` after DOM changes, at most once per animation frame. One
- * MutationObserver is shared by every feature. Returns an unsubscribe.
+ * Runs `cb` after nodes are added or removed anywhere in the page, at most
+ * once per animation frame. One MutationObserver is shared by every feature.
+ * Attribute changes are not observed. Callbacks must be idempotent: DOM they
+ * change themselves schedules another frame. Returns an unsubscribe.
  */
 export function onDomChange(cb: Callback): () => void {
   callbacks.add(cb);
@@ -78,7 +87,10 @@ export function onDomChange(cb: Callback): () => void {
   };
 }
 
-/** Resolves with the first element matching `selector`; rejects when `signal` aborts. */
+/**
+ * Resolves with the first element matching `selector`. Rejects with the
+ * signal's reason when `signal` aborts, so callers that abort must catch.
+ */
 export function whenElement<T extends Element = Element>(selector: string, signal?: AbortSignal): Promise<T> {
   return new Promise((resolve, reject) => {
     const found = document.querySelector<T>(selector);

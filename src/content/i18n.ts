@@ -38,7 +38,7 @@ const dictionaries: Record<string, Record<MessageKey, string>> = { en, es };
 function language(): string {
   for (const tag of [document.documentElement.lang, navigator.language]) {
     const base = tag?.toLowerCase().split("-")[0];
-    if (base && base in dictionaries) return base;
+    if (base && Object.hasOwn(dictionaries, base)) return base;
   }
   return "en";
 }

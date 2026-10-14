@@ -27,7 +27,6 @@ const options = {
   format: "iife",
   sourcemap: watch ? "inline" : false,
   logLevel: "info",
-  loader: { ".css": "css" },
 };
 
 // CSS is bundled separately so the manifest can inject it at document_start.
