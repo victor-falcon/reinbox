@@ -14,6 +14,9 @@ html.reinbox [data-ri-shell="bar"] {
   position: relative;
   align-items: center;
   box-sizing: border-box;
+  /* Gmail's min-content floor would push the icons off screen instead of
+     letting the search box shrink. */
+  min-width: 0 !important;
   height: 72px;
   padding: 0 20px;
 }
@@ -76,12 +79,12 @@ html.reinbox header#gb .s1rbBe {
 html.reinbox [data-ri-shell="search"] {
   position: relative;
   /* The width (not only the basis) sizes the header's middle part, which
-     shrinks this box first when the window is narrow. Gmail's absolutely
-     positioned buttons pad the form by 56px on each side, so the input
-     needs more than 112px to show. */
+     shrinks this box first when the window is narrow. Gmail's own rules set
+     both, hence the !important. Its buttons take ~103px of the form, so
+     230px is the least that shows the whole placeholder. */
   flex: 0 1 320px !important;
-  width: 320px;
-  min-width: 180px;
+  width: 320px !important;
+  min-width: 230px;
   margin-left: auto;
   padding: 0 8px 0 0 !important;
 }
@@ -170,7 +173,7 @@ html.reinbox .ri-fab:focus-visible {
   outline-offset: 2px;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1100px) {
   html.reinbox .ri-views a {
     padding: 0 12px;
   }
@@ -178,7 +181,7 @@ html.reinbox .ri-fab:focus-visible {
 
 /* Too narrow to center the views on the window and keep a usable search
    box: they sit between the wordmark and the search box instead. */
-@media (max-width: 1280px) {
+@media (max-width: 1365px) {
   html.reinbox [data-ri-shell="bar"] > * {
     order: 1;
   }
@@ -193,6 +196,11 @@ html.reinbox .ri-fab:focus-visible {
     order: 0;
     margin: 0 auto;
     transform: none;
+  }
+
+  /* Keeps the views clear of the wordmark and the search box. */
+  html.reinbox [data-ri-shell="bar"] {
+    gap: 16px;
   }
 
   html.reinbox [data-ri-shell="middle"] {

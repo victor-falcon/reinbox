@@ -1,9 +1,29 @@
 import { SELECTORS, onDomChange } from "../../gmail";
 import { t } from "../../i18n";
 
-// Pencil from the Focus mockup.
-const PENCIL =
-  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19l1-4L16 5l3 3L9 18z"></path></svg>';
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+// Pencil from the Focus mockup. Built node by node: Gmail enforces Trusted
+// Types, so assigning markup to innerHTML throws.
+function pencilIcon(): SVGSVGElement {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  const attrs: Record<string, string> = {
+    width: "22",
+    height: "22",
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    "stroke-width": "2",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+    "aria-hidden": "true",
+  };
+  for (const [name, value] of Object.entries(attrs)) svg.setAttribute(name, value);
+  const path = document.createElementNS(SVG_NS, "path");
+  path.setAttribute("d", "M5 19l1-4L16 5l3 3L9 18z");
+  svg.append(path);
+  return svg;
+}
 
 // Gmail's compose button reacts to the full mouse sequence, not to click alone.
 function openCompose(): void {
@@ -24,7 +44,7 @@ export function start(): () => void {
   button.className = "ri-fab";
   button.setAttribute("aria-label", t("compose"));
   button.title = t("compose");
-  button.innerHTML = PENCIL;
+  button.append(pencilIcon());
   button.addEventListener("click", openCompose);
 
   const mount = () => {
