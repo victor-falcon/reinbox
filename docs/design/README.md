@@ -23,7 +23,7 @@ Bundles render expanded inside a bordered card with a "Mark all done" button.
 Compose is a neutral circular floating button.
 
 - Font: Plus Jakarta Sans (400, 500, 600, 700)
-- Column max width: 700px
+- Column max width: 1000px (shrinks with the window; the mockup used 700px)
 - Radii: rows 20px, bundle card 22px, segmented control 16px / 12px, buttons 12–14px, FAB circle
 - Date heading: 28px / 700 / -0.02em, followed by a 13px secondary date
 
