@@ -36,6 +36,7 @@ function update(change: Partial<Prefs>): void {
 }
 
 function translate(): void {
+  // popup.html ships without lang, so language() falls back to the browser's.
   document.documentElement.lang = language();
   for (const element of document.querySelectorAll<HTMLElement>("[data-i18n]")) {
     element.textContent = t(element.dataset.i18n as MessageKey);
