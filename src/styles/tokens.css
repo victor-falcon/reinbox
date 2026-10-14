@@ -1,0 +1,54 @@
+/* Focus design tokens (docs/design/README.md). Light by default, dark when
+   the content script adds `ri-dark`. */
+html.reinbox {
+  --ri-bg: #fbfaf8;
+  --ri-surface: #ffffff;
+  --ri-surface2: #f1efeb;
+  --ri-border: #e9e6e1;
+  --ri-text: #1c1a17;
+  --ri-text2: #5e5a53;
+  --ri-text3: #77726a;
+  --ri-accent: #c2410c;
+  --ri-accent-soft: #fcebdf;
+  --ri-hover: #f3f1ed;
+  --ri-shadow: 0 1px 2px rgba(28, 26, 23, 0.08);
+  --ri-fab-shadow: 0 10px 24px rgba(28, 26, 23, 0.22);
+
+  --ri-bundle-social: #d9541e;
+  --ri-bundle-promotions: #1f7fc0;
+  --ri-bundle-updates: #b86e00;
+  --ri-bundle-finance: #2e8b48;
+  --ri-bundle-travel: #6e52d8;
+
+  --ri-font: "Plus Jakarta Sans Variable", system-ui, sans-serif;
+  --ri-column: 700px;
+
+  --ri-radius-row: 20px;
+  --ri-radius-card: 22px;
+  --ri-radius-segmented: 16px;
+  --ri-radius-segment: 12px;
+  --ri-radius-button: 12px;
+  --ri-radius-button-lg: 14px;
+  --ri-radius-round: 50%;
+}
+
+html.reinbox.ri-dark {
+  --ri-bg: #121110;
+  --ri-surface: #1c1b19;
+  --ri-surface2: #1f1e1c;
+  --ri-border: #2c2a27;
+  --ri-text: #f0ede8;
+  --ri-text2: #b3aea6;
+  --ri-text3: #8f8a82;
+  --ri-accent: #f28b4b;
+  --ri-accent-soft: #3a2416;
+  --ri-hover: #1e1d1b;
+  --ri-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ri-fab-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+
+  --ri-bundle-social: #e8794a;
+  --ri-bundle-promotions: #4aa8e0;
+  --ri-bundle-updates: #e5a13a;
+  --ri-bundle-finance: #4fb06a;
+  --ri-bundle-travel: #9b83f0;
+}

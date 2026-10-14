@@ -6,9 +6,20 @@ const watch = process.argv.includes("--watch");
 mkdirSync("dist", { recursive: true });
 cpSync("public", "dist", { recursive: true });
 
+// Plus Jakarta Sans (OFL): only the latin + latin-ext upright subsets, with
+// the license next to them as the OFL requires.
+const fontDir = "node_modules/@fontsource-variable/plus-jakarta-sans";
+mkdirSync("dist/fonts", { recursive: true });
+for (const subset of ["latin", "latin-ext"]) {
+  const file = `plus-jakarta-sans-${subset}-wght-normal.woff2`;
+  cpSync(`${fontDir}/files/${file}`, `dist/fonts/${file}`);
+}
+cpSync(`${fontDir}/LICENSE`, "dist/fonts/OFL.txt");
+
 const options = {
   entryPoints: {
     content: "src/content/index.ts",
+    popup: "src/popup/index.ts",
   },
   bundle: true,
   outdir: "dist",
@@ -25,6 +36,8 @@ const cssOptions = {
   bundle: true,
   outdir: "dist",
   logLevel: "info",
+  // Font URLs point into the extension package; esbuild must leave them alone.
+  external: ["chrome-extension://*"],
 };
 
 if (watch) {

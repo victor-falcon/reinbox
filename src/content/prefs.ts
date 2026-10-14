@@ -1,31 +1,55 @@
-// Every boolean preference maps to a `ri-<kebab-key>` class on <html>.
-// CSS reacts to those classes, so most features need no JavaScript at all.
-export const DEFAULT_PREFS = {
+export type Theme = "auto" | "light" | "dark";
+
+export interface Prefs {
+  enabled: boolean;
+  theme: Theme;
+}
+
+export const DEFAULT_PREFS: Prefs = {
   enabled: true,
+  theme: "auto",
 };
 
-export type Prefs = typeof DEFAULT_PREFS;
-export type PrefKey = keyof Prefs;
-
 const STORAGE_KEY = "prefs";
+const THEMES: readonly Theme[] = ["auto", "light", "dark"];
+
+declare global {
+  interface Window {
+    // Dev harness only: read when chrome.storage is unavailable (page world).
+    __REINBOX_PREFS__?: Partial<Prefs>;
+  }
+}
+
+// Storage may hold partial or stale values, so every field is validated.
+export function normalize(value: unknown): Prefs {
+  const raw = (value && typeof value === "object" ? value : {}) as Partial<Prefs>;
+  return {
+    enabled: typeof raw.enabled === "boolean" ? raw.enabled : DEFAULT_PREFS.enabled,
+    theme: THEMES.includes(raw.theme as Theme) ? (raw.theme as Theme) : DEFAULT_PREFS.theme,
+  };
+}
+
+function storage(): chrome.storage.SyncStorageArea | undefined {
+  return typeof chrome !== "undefined" ? chrome.storage?.sync : undefined;
+}
 
 export async function loadPrefs(): Promise<Prefs> {
-  const stored = await chrome.storage.sync.get(STORAGE_KEY);
-  return { ...DEFAULT_PREFS, ...(stored[STORAGE_KEY] ?? {}) };
+  const sync = storage();
+  if (!sync) return normalize(window.__REINBOX_PREFS__);
+  const stored = await sync.get(STORAGE_KEY);
+  return normalize(stored[STORAGE_KEY]);
 }
 
 export async function savePrefs(prefs: Prefs): Promise<void> {
-  await chrome.storage.sync.set({ [STORAGE_KEY]: prefs });
+  await storage()?.set({ [STORAGE_KEY]: normalize(prefs) });
 }
 
-export function onPrefsChange(callback: (prefs: Prefs) => void): void {
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes[STORAGE_KEY]) {
-      callback({ ...DEFAULT_PREFS, ...changes[STORAGE_KEY].newValue });
-    }
-  });
-}
-
-export function prefClassName(key: PrefKey): string {
-  return `ri-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
+// Returns an unsubscribe function. A no-op without chrome.storage.
+export function onPrefsChange(callback: (prefs: Prefs) => void): () => void {
+  if (!storage()) return () => {};
+  const listener = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+    if (area === "sync" && changes[STORAGE_KEY]) callback(normalize(changes[STORAGE_KEY].newValue));
+  };
+  chrome.storage.onChanged.addListener(listener);
+  return () => chrome.storage.onChanged.removeListener(listener);
 }
