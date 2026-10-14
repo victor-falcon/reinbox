@@ -1,1 +1,507 @@
-/* Owned by T2. */
+/* Thread list in the Focus style: one centered column, three-line rows with
+   an avatar, date headings, and Inbox-style hover actions (pin, snooze,
+   done). Avatars and the `data-ri-group*` attributes come from
+   src/content/features/list.ts. Gmail hooks: src/content/gmail.ts. */
+
+html.reinbox {
+  --ri-icon-pin: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M9 4h6l-1 5 3 3H7l3-3zM12 12v8'/></svg>");
+  --ri-icon-pin-filled: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black' stroke='black' stroke-width='1.6' stroke-linejoin='round'><path d='M9 4h6l-1 5 3 3H7l3-3zM12 12v8'/></svg>");
+  --ri-icon-snooze: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='8'/><path d='M12 8v4l3 2'/></svg>");
+  --ri-icon-check: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12.5l4.5 4.5L19 7.5'/></svg>");
+}
+
+/* ---- Column and toolbar ---- */
+
+html.reinbox [role=main] table:has(> tbody > tr.zA) {
+  display: block;
+  width: 100%;
+  max-width: var(--ri-column);
+  margin: 0 auto;
+  padding: 0 20px 24px;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+}
+
+html.reinbox [role=main] table:has(> tbody > tr.zA) > colgroup {
+  display: none;
+}
+
+html.reinbox [role=main] table:has(> tbody > tr.zA) > tbody {
+  display: block;
+}
+
+/* Sticky, so it keeps the page background to cover rows scrolling under it.
+   Content aligned with the row content (column padding + row padding);
+   padding instead of auto margins because Gmail forces margin-right.
+   `[role=main]` outranks Gmail's own toolbar background (`.aeI .wZkTXb .D`). */
+html.reinbox [role=main] [gh=tm] {
+  width: auto;
+  max-width: none;
+  margin-left: 0;
+  padding-inline: max(32px, calc((100% - var(--ri-column)) / 2 + 32px));
+  box-sizing: border-box;
+  border: 0;
+  background: var(--ri-bg);
+  box-shadow: none;
+}
+
+/* Gmail's white layer behind the sticky toolbar. */
+html.reinbox [role=main] [gh=tm]::after {
+  content: none;
+}
+
+/* ---- Rows ----
+   Grid: avatar (40px + 14px gap) | sender | inline pin | spacer | hover pin | time or actions.
+   No column gap, because empty tracks would still get one: spacing comes
+   from the cells' own margins. */
+
+html.reinbox [role=main] tr.zA {
+  display: grid;
+  grid-template-columns: 54px minmax(0, max-content) auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  position: relative;
+  height: auto;
+  margin: 0;
+  padding: 14px 12px;
+  border: 0;
+  border-radius: var(--ri-radius-row);
+  background: transparent;
+  box-shadow: none;
+  color: var(--ri-text);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+html.reinbox [role=main] tr.zA + tr.zA:not([data-ri-group]) {
+  margin-top: 4px;
+}
+
+html.reinbox [role=main] tr.zA:hover {
+  background: var(--ri-hover);
+  box-shadow: none;
+}
+
+html.reinbox [role=main] tr.zA.x7 {
+  background: var(--ri-accent-soft);
+}
+
+/* Cells Inbox didn't have (importance, side markers, attachment column…),
+   including any Gmail adds later. */
+html.reinbox [role=main] tr.zA > td {
+  display: none;
+}
+
+html.reinbox [role=main] tr.zA > :is(td.oZ-x3, td.yX, td.a4W, td.xW) {
+  display: flex;
+  align-items: center;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+/* ---- Avatar (in the checkbox cell) ---- */
+
+html.reinbox [role=main] tr.zA > td.oZ-x3 {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: start;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin-inline-end: 14px;
+}
+
+/* Gmail's drag handle, shown at the cell's corner on hover. */
+html.reinbox [role=main] tr.zA > td.oZ-x3::before {
+  content: none;
+}
+
+/* Gmail's checkbox, stretched invisibly over the avatar: clicking the avatar
+   clicks the checkbox. */
+html.reinbox [role=main] tr.zA > td.oZ-x3 [role=checkbox] {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: auto;
+  height: auto;
+  margin: 0;
+  border-radius: var(--ri-radius-round);
+  opacity: 0;
+  cursor: pointer;
+}
+
+html.reinbox .ri-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ri-radius-round);
+  background: var(--ri-av-bg);
+  color: var(--ri-av-fg);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Keyboard focus on the checkbox, and Gmail's j/k cursor row (`.btb`),
+   whose own marker lives in a hidden cell. */
+html.reinbox [role=main] tr.zA > td.oZ-x3:has(:focus-visible) .ri-avatar,
+html.reinbox [role=main] tr.zA.btb .ri-avatar {
+  outline: 2px solid var(--ri-text3);
+  outline-offset: 2px;
+}
+
+html.reinbox [role=main] tr.zA.x7 .ri-avatar {
+  background: var(--ri-accent);
+  color: transparent;
+}
+
+html.reinbox [role=main] tr.zA.x7 .ri-avatar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  mask: var(--ri-icon-check) center / 20px no-repeat;
+}
+
+html.reinbox .ri-avatar[data-ri-tone="0"] { --ri-av-bg: #fcebdf; --ri-av-fg: #c2410c; }
+html.reinbox .ri-avatar[data-ri-tone="1"] { --ri-av-bg: #eeece8; --ri-av-fg: #3d3a35; }
+html.reinbox .ri-avatar[data-ri-tone="2"] { --ri-av-bg: #e7f4ec; --ri-av-fg: #2e8b48; }
+html.reinbox .ri-avatar[data-ri-tone="3"] { --ri-av-bg: #e3eff9; --ri-av-fg: #1f6faf; }
+html.reinbox .ri-avatar[data-ri-tone="4"] { --ri-av-bg: #eeeafb; --ri-av-fg: #5b42c4; }
+html.reinbox .ri-avatar[data-ri-tone="5"] { --ri-av-bg: #fbf0d9; --ri-av-fg: #9a5b00; }
+html.reinbox .ri-avatar[data-ri-tone="6"] { --ri-av-bg: #fbe6ea; --ri-av-fg: #b4234a; }
+html.reinbox .ri-avatar[data-ri-tone="7"] { --ri-av-bg: #e1f3f1; --ri-av-fg: #1c7a70; }
+
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="0"] { --ri-av-bg: #3a2416; --ri-av-fg: #f6b48a; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="1"] { --ri-av-bg: #2c2a27; --ri-av-fg: #dad5cd; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="2"] { --ri-av-bg: #16301f; --ri-av-fg: #7fd39a; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="3"] { --ri-av-bg: #14283a; --ri-av-fg: #8cc4ee; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="4"] { --ri-av-bg: #261f3f; --ri-av-fg: #b9a8f5; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="5"] { --ri-av-bg: #33260f; --ri-av-fg: #edc071; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="6"] { --ri-av-bg: #3a1820; --ri-av-fg: #f29bb0; }
+html.reinbox.ri-dark .ri-avatar[data-ri-tone="7"] { --ri-av-bg: #112e2b; --ri-av-fg: #7dd3c8; }
+
+/* ---- Line 1: sender + time ---- */
+
+html.reinbox [role=main] tr.zA > td.yX {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+html.reinbox [role=main] tr.zA > td.yX .yW {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ri-text);
+}
+
+html.reinbox [role=main] tr.zA > td.yX .yW *,
+html.reinbox [role=main] tr.zA > td.a4W .bog,
+html.reinbox [role=main] tr.zA > td.a4W .bog * {
+  font-weight: 500;
+  color: var(--ri-text);
+}
+
+html.reinbox [role=main] tr.zA.zE > td.yX .yW *,
+html.reinbox [role=main] tr.zA.zE > td.a4W .bog,
+html.reinbox [role=main] tr.zA.zE > td.a4W .bog * {
+  font-weight: 700;
+}
+
+html.reinbox [role=main] tr.zA > td.xW {
+  grid-column: 6;
+  grid-row: 1;
+  justify-content: flex-end;
+  padding-inline-start: 12px;
+}
+
+html.reinbox [role=main] tr.zA > td.xW,
+html.reinbox [role=main] tr.zA > td.xW * {
+  color: var(--ri-text3);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ---- Lines 2 and 3: subject + snippet ---- */
+
+html.reinbox [role=main] tr.zA > td.a4W {
+  grid-column: 2 / 5;
+  grid-row: 2;
+  margin-top: 3px;
+}
+
+html.reinbox [role=main] tr.zA > td.a4W :is(.a4X, .xS) {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Label chips share the subject line; the snippet wraps to its own line. */
+html.reinbox [role=main] tr.zA > td.a4W .xT {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px 6px;
+  height: auto;
+  min-width: 0;
+}
+
+html.reinbox [role=main] tr.zA > td.a4W .y6 {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+html.reinbox [role=main] tr.zA > td.a4W :is(.y6, .bog, .y2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.reinbox [role=main] tr.zA > td.a4W .y2 {
+  display: block;
+  flex: 1 0 100%;
+  order: 1;
+  min-width: 0;
+  color: var(--ri-text2);
+  font-weight: 400;
+}
+
+/* The " - " Gmail puts between subject and snippet. */
+html.reinbox [role=main] tr.zA > td.a4W .y2 .Zt {
+  display: none;
+}
+
+html.reinbox [role=main] tr.zA > td.a4W .xT > :not(.y6, .y2) {
+  flex: none;
+  opacity: 0.75;
+  font-size: 12px;
+}
+
+/* ---- Pin (Gmail's star) ----
+   Starred: a small accent pin next to the sender. Not starred: an outline
+   pin button in the hover cluster. Gmail draws the star with ::before. */
+
+html.reinbox [role=main] tr.zA > td.apU {
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+html.reinbox [role=main] tr.zA > td.apU:has(.T-KT-Jp) {
+  display: flex;
+  grid-column: 3;
+  grid-row: 1;
+  margin-inline-start: 6px;
+}
+
+html.reinbox [role=main] tr.zA > td.apU .T-KT {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border-radius: 8px;
+  background: none;
+  cursor: pointer;
+}
+
+html.reinbox [role=main] tr.zA > td.apU .T-KT > img {
+  display: none;
+}
+
+html.reinbox [role=main] tr.zA > td.apU .T-KT::before {
+  content: "";
+  display: block;
+  position: static;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  background: var(--ri-accent);
+  opacity: 1;
+  transform: none;
+  mask: var(--ri-icon-pin-filled) center / contain no-repeat;
+}
+
+html.reinbox [role=main] tr.zA > td.apU .T-KT::after {
+  content: none;
+}
+
+html.reinbox [role=main] tr.zA:hover > td.apU:not(:has(.T-KT-Jp)) {
+  display: flex;
+  grid-column: 5;
+  grid-row: 1 / -1;
+  margin-inline-start: 12px;
+}
+
+html.reinbox [role=main] tr.zA:hover > td.apU .T-KT:not(.T-KT-Jp) {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ri-radius-button);
+  background: var(--ri-surface);
+}
+
+html.reinbox [role=main] tr.zA:hover > td.apU .T-KT:not(.T-KT-Jp)::before {
+  width: 18px;
+  height: 18px;
+  background: var(--ri-text2);
+  mask-image: var(--ri-icon-pin);
+}
+
+/* ---- Hover actions: snooze + Done (archive) ---- */
+
+html.reinbox [role=main] tr.zA:hover > td.xW {
+  display: none;
+}
+
+html.reinbox [role=main] tr.zA:hover > td.bq4 {
+  display: flex;
+  grid-column: 6;
+  grid-row: 1 / -1;
+  align-self: center;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  margin-inline-start: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 ul.bqY {
+  display: flex;
+  gap: 4px;
+  position: static;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--ri-radius-button);
+  background-color: var(--ri-surface);
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1;
+  cursor: pointer;
+}
+
+/* Gmail uses this ::before for an animated hover circle (hidden, scaled
+   down, behind the button); it becomes the icon instead. */
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX:is(.brq, .brv) {
+  background-image: none;
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX::before {
+  content: "";
+  position: static;
+  z-index: auto;
+  width: 18px;
+  height: 18px;
+  border: 0;
+  box-shadow: none;
+  opacity: 1;
+  transform: none;
+  transition: none;
+  mask: center / contain no-repeat;
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brv::before {
+  background: var(--ri-text2);
+  mask-image: var(--ri-icon-snooze);
+}
+
+/* Delete and mark read/unread stay in the toolbar and keyboard shortcuts. */
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX:is(.bru, .brr, .SHFPQe) {
+  display: none;
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq {
+  order: 1;
+  background-color: var(--ri-accent);
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq::before {
+  background: #fff;
+  mask-image: var(--ri-icon-check);
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX:not(.brq):hover,
+html.reinbox [role=main] tr.zA:hover > td.apU .T-KT:not(.T-KT-Jp):hover {
+  background: var(--ri-surface2);
+}
+
+html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq:hover {
+  opacity: 0.9;
+}
+
+/* ---- Date headings ----
+   Drawn above the first row of each group, in the row's top margin so the
+   hover background does not cover them. */
+
+html.reinbox [role=main] tr.zA[data-ri-group] {
+  margin-top: 82px;
+}
+
+html.reinbox [role=main] tr.zA[data-ri-group]:first-child {
+  margin-top: 46px;
+}
+
+html.reinbox [role=main] tr.zA[data-ri-group]::before {
+  content: attr(data-ri-group);
+  position: absolute;
+  inset-inline-start: 12px;
+  bottom: calc(100% + 10px);
+  color: var(--ri-text);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+html.reinbox [role=main] tr.zA[data-ri-group-sub]::after {
+  content: attr(data-ri-group-sub);
+  position: absolute;
+  inset-inline: calc(12px + var(--ri-group-w) + 10px) 12px;
+  bottom: calc(100% + 16px);
+  overflow: hidden;
+  color: var(--ri-text3);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
