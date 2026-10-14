@@ -22,7 +22,8 @@ html.reinbox.ri-dark {
 
 /* Same column as the thread below it. */
 html.reinbox [gh=tm]:has([act="19"]) {
-  padding-inline: max(16px, calc((100% - var(--ri-thread-column)) / 2));
+  /* The thread adds 16px of its own padding inside the column. */
+  padding-inline: max(16px, calc((100% - var(--ri-thread-column)) / 2 + 16px));
   background: transparent;
 }
 
@@ -217,6 +218,7 @@ html.reinbox .a3s .ajT {
 /* Gmail keeps this bar sticky at the bottom of the thread. */
 html.reinbox [role=main] .a98 .btDi4d {
   background: var(--ri-bg);
+  box-shadow: none;
 }
 
 html.reinbox [role=main] .a98 .btDi4d .nr {
