@@ -43,7 +43,12 @@ async function servePage(res, file, url) {
   ].join("");
   const html = await readFile(join(FIXTURES, file), "utf8");
   const i = html.indexOf("</head>");
-  res.writeHead(200, { "content-type": TYPES[".html"], "cache-control": "no-store" });
+  res.writeHead(200, {
+    "content-type": TYPES[".html"],
+    "cache-control": "no-store",
+    // Gmail enforces Trusted Types: innerHTML and friends throw there.
+    "content-security-policy": "require-trusted-types-for 'script'",
+  });
   res.end(i === -1 ? inject + html : html.slice(0, i) + inject + html.slice(i));
 }
 
