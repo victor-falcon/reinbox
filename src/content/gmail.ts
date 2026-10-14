@@ -39,6 +39,25 @@ export const SELECTORS = {
   rowMarkUnread: "td.bq4 li.bqX.SHFPQe",
   rowSnooze: "td.bq4 li.bqX.brv",
 
+  // Conversation view. `act` ids are Gmail's toolbar command ids: 19 is
+  // "Back to <label>", which only the thread toolbar has; 7 is Archive.
+  threadToolbar: "[gh=mtb]:has([act='19'])",
+  threadArchive: "[gh=mtb]:has([act='19']) [act='7']",
+  thread: "[role=main] .a98",
+  threadSubject: "h2.hP",
+  // One per message, expanded or collapsed.
+  message: "[role=main] [role=listitem]",
+  messageHeader: ".gE",
+  // Carries `email` and `name` attributes.
+  messageSender: ".gD[email]",
+  messageDate: ".g3",
+  replyButtons: ".amn .ams",
+
+  // Compose: the floating dialog and the inline reply share `.aoI`.
+  compose: ".aoI[role=region]",
+  composeDialog: "[role=dialog]:has(.aoI)",
+  composeSend: ".aoO[role=button]",
+
   // Rendered email content: never restyle fonts inside these.
   messageBody: ".a3s",
   composeBody: ".editable",
