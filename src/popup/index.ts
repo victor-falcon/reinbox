@@ -6,6 +6,8 @@ const enabledInput = document.querySelector<HTMLInputElement>("#enabled")!;
 const themeInputs = [...document.querySelectorAll<HTMLInputElement>("input[name=theme]")];
 
 let prefs: Prefs;
+// Writes in flight. Their storage echoes are older than the local state.
+let pendingSaves = 0;
 
 function applyTheme(): void {
   const dark = prefs.theme === "dark" || (prefs.theme === "auto" && darkQuery.matches);
@@ -21,8 +23,16 @@ function render(next: Prefs): void {
 
 // Open Gmail tabs pick the change up through their own storage listener.
 function update(change: Partial<Prefs>): void {
+  const previous = prefs;
   render({ ...prefs, ...change });
-  savePrefs(prefs).catch((error) => console.warn("[reinbox] could not save prefs", error));
+  pendingSaves++;
+  savePrefs(prefs)
+    .catch((error) => {
+      console.warn("[reinbox] could not save prefs", error);
+      // Show what Gmail actually has.
+      render(previous);
+    })
+    .finally(() => pendingSaves--);
 }
 
 function translate(): void {
@@ -45,7 +55,9 @@ async function main(): Promise<void> {
   }
   darkQuery.addEventListener("change", applyTheme);
   // Keep in sync when prefs change elsewhere (another window, another device).
-  onPrefsChange(render);
+  onPrefsChange((next) => {
+    if (pendingSaves === 0) render(next);
+  });
 }
 
 main();

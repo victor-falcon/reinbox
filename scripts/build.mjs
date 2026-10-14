@@ -36,7 +36,7 @@ const cssOptions = {
   outdir: "dist",
   logLevel: "info",
   // Font URLs point into the extension package; esbuild must leave them alone.
-  external: ["chrome-extension://*", "/fonts/*"],
+  external: ["chrome-extension://*"],
 };
 
 if (watch) {
