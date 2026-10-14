@@ -21,9 +21,10 @@ function decodeHash(hash: string): string {
   }
 }
 
-// A view stays active while one of its conversations is open (`#inbox/<id>`).
+// A view stays active while one of its conversations is open (`#inbox/<id>`)
+// or while Gmail adds a query to it (`#inbox?compose=new`).
 function isActive(viewHash: string): boolean {
-  const current = decodeHash(location.hash || "#inbox");
+  const current = decodeHash(location.hash || "#inbox").split("?")[0];
   const target = decodeHash(viewHash);
   return current === target || current.startsWith(`${target}/`);
 }
@@ -38,6 +39,8 @@ function buildViews(): HTMLElement {
     link.dataset.hash = view.hash;
     // Only the hash changes, so Gmail's account path (/mail/u/N/) is kept.
     link.href = location.href.split("#")[0] + view.hash;
+    // Gmail pages carry a <base href>; setting the hash directly guarantees an
+    // in-page navigation whatever it points to.
     link.addEventListener("click", (event) => {
       // Modified clicks keep the browser default (new tab, new window).
       if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -65,19 +68,21 @@ function childContaining(parent: Element, el: Element): Element | null {
 
 export function start(): () => void {
   const nav = buildViews();
-  const tagged = new Set<Element>();
+  // One element per part: Gmail may re-render the header.
+  const tagged = new Map<string, Element>();
   let bar: HTMLElement | undefined;
 
   // The layout keeps the search box clear of the centered views control,
   // whose width depends on the UI language.
-  const resize = new ResizeObserver(() => {
-    bar?.style.setProperty("--ri-views-w", `${nav.offsetWidth}px`);
-  });
+  const syncWidth = () => bar?.style.setProperty("--ri-views-w", `${nav.offsetWidth}px`);
+  const resize = new ResizeObserver(syncWidth);
 
   function tag(el: Element | null | undefined, part: string): void {
-    if (!el || el.getAttribute(PART) === part) return;
+    const previous = tagged.get(part);
+    if (!el || previous === el) return;
+    previous?.removeAttribute(PART);
     el.setAttribute(PART, part);
-    tagged.add(el);
+    tagged.set(part, el);
   }
 
   function mount(): void {
@@ -95,6 +100,7 @@ export function start(): () => void {
     if (nav.parentElement !== bar) {
       bar.append(nav);
       resize.observe(nav);
+      syncWidth();
     }
   }
 
@@ -110,6 +116,6 @@ export function start(): () => void {
     resize.disconnect();
     nav.remove();
     bar?.style.removeProperty("--ri-views-w");
-    for (const el of tagged) el.removeAttribute(PART);
+    for (const el of tagged.values()) el.removeAttribute(PART);
   };
 }

@@ -18,13 +18,19 @@ export function start(): () => void {
 
   function setOpen(open: boolean): void {
     root.classList.toggle(OPEN_CLASS, open);
-    const menu = document.querySelector(SELECTORS.menuButton);
+    const menu = document.querySelector<HTMLElement>(SELECTORS.menuButton);
     if (menu) {
       if (menuExpanded?.menu !== menu) menuExpanded = { menu, value: menu.getAttribute("aria-expanded") };
       menu.setAttribute("aria-expanded", String(open));
     }
-    if (open && !scrim.isConnected) document.body.append(scrim);
-    if (open) document.querySelector<HTMLElement>(`${SELECTORS.leftNav} a[href]`)?.focus();
+    if (open) {
+      if (!scrim.isConnected) document.body.append(scrim);
+      // A frame later: Gmail may still be expanding a collapsed rail.
+      requestAnimationFrame(() => document.querySelector<HTMLElement>(`${SELECTORS.leftNav} a[href]`)?.focus());
+    } else if (document.activeElement?.closest(SELECTORS.leftNav)) {
+      // Focus must not stay inside the hidden drawer.
+      menu?.focus();
+    }
   }
 
   const isOpen = () => root.classList.contains(OPEN_CLASS);
@@ -36,7 +42,8 @@ export function start(): () => void {
     if (event instanceof KeyboardEvent && !isActivation(event)) return;
 
     // The collapsed icon rail has no labels. Let Gmail expand it (once) so
-    // the drawer shows the full nav.
+    // the drawer shows the full nav. Gmail saves that as the user's nav
+    // setting, so the nav stays expanded if the extension is turned off.
     const collapsed = document.querySelector(SELECTORS.leftNavCollapsed);
     if (!collapsed) {
       event.stopPropagation();
@@ -48,11 +55,12 @@ export function start(): () => void {
   function onKeydown(event: KeyboardEvent): void {
     if (event.key !== "Escape" || !isOpen()) return;
     event.stopPropagation();
-    setOpen(false);
-    document.querySelector<HTMLElement>(SELECTORS.menuButton)?.focus();
+    close();
   }
 
-  const close = () => setOpen(false);
+  const close = () => {
+    if (isOpen()) setOpen(false);
+  };
   const menuEvents = ["mousedown", "mouseup", "click", "keydown"] as const;
 
   for (const type of menuEvents) window.addEventListener(type, onMenuEvent, true);

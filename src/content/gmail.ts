@@ -8,8 +8,6 @@ export const SELECTORS = {
   header: "header#gb",
   // Hamburger button; the only `div[role=button]` in the header with aria-expanded.
   menuButton: "header#gb div[role=button][aria-expanded]",
-  // Gmail logo link (one visible, one in the hidden mobile bar).
-  logoLink: 'header#gb a[href="#inbox"]',
   search: "form[role=search]",
   leftNav: ".aeN[role=navigation]",
   // The left nav collapsed to an icon rail (`.bym` while hover-expanded).

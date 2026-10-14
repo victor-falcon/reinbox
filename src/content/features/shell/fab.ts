@@ -8,7 +8,11 @@ const PENCIL =
 // Gmail's compose button reacts to the full mouse sequence, not to click alone.
 function openCompose(): void {
   const compose = document.querySelector(SELECTORS.composeButton);
-  if (!compose) return;
+  if (!compose) {
+    // Gmail also opens compose from this hash.
+    location.hash = "#inbox?compose=new";
+    return;
+  }
   for (const type of ["mousedown", "mouseup", "click"]) {
     compose.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
   }
