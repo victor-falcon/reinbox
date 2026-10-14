@@ -1,6 +1,6 @@
 /* Conversation view and compose window. Gmail hooks: src/content/gmail.ts
-   (thread*, message*, reply*, compose*). conversation.ts adds `data-ri-done`
-   to the thread's Archive button and `data-ri-body` to each email body. */
+   (thread*, compose*, messageBody). conversation.ts adds `data-ri-done` to
+   the thread's Archive button and `data-ri-body` to each email body. */
 
 html.reinbox {
   /* Email bodies with their own colors stay on a light "paper" sheet in dark
@@ -48,7 +48,8 @@ html.reinbox [gh=mtb]:has([act="19"]) .T-I:hover {
 
 /* Archive becomes Done: an accent pill with a check, like the list rows. */
 html.reinbox [data-ri-done] {
-  display: inline-flex !important;
+  /* No !important: Gmail hides actions that don't apply with inline styles. */
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   height: 36px;
@@ -68,6 +69,11 @@ html.reinbox [data-ri-done] {
 html.reinbox [data-ri-done]:hover {
   background: var(--ri-accent) !important;
   filter: brightness(1.08);
+}
+
+html.reinbox [data-ri-done]:focus-visible {
+  outline: 2px solid var(--ri-text);
+  outline-offset: 2px;
 }
 
 html.reinbox [data-ri-done] > * {
@@ -129,12 +135,12 @@ html.reinbox [role=main] .a98 .aHU {
   box-shadow: var(--ri-shadow);
 }
 
-html.reinbox [role=main] [role=listitem] {
+html.reinbox [role=main] .a98 .aHU [role=listitem] {
   background: transparent;
   border: 0;
 }
 
-html.reinbox [role=main] [role=listitem] + [role=listitem] {
+html.reinbox [role=main] .a98 .aHU [role=listitem] + [role=listitem] {
   border-top: 1px solid var(--ri-border);
 }
 
@@ -157,24 +163,24 @@ html.reinbox [role=main] .a98 .adv {
 
 /* ---------- Message header ---------- */
 
-html.reinbox [role=main] .gD {
+html.reinbox [role=main] .a98 .gD {
   color: var(--ri-text);
   font-weight: 600;
 }
 
-html.reinbox [role=main] :is(.go, .g3, .ajw, .hb, .g2) {
+html.reinbox [role=main] .a98 :is(.go, .g3, .ajw, .hb, .g2) {
   color: var(--ri-text3);
 }
 
 /* Star, reaction, reply, more, print: quiet icon buttons. Their SVGs follow
    currentColor once Gmail's per-part colors are dropped. */
-html.reinbox [role=main] :is(.gE, .bHJ) :is(button, [role=button]),
-html.reinbox [role=main] :is(.gE, .bHJ) :is(button, [role=button]) * {
+html.reinbox [role=main] .a98 :is(.gE, .bHJ) :is(button, [role=button]),
+html.reinbox [role=main] .a98 :is(.gE, .bHJ) :is(button, [role=button]) * {
   color: var(--ri-text2);
 }
 
 /* The star is a sprite image; a starred one keeps its color. */
-html.reinbox.ri-dark [role=main] .gE .T-KT:not(.T-KT-Jp) img {
+html.reinbox.ri-dark [role=main] .a98 .gE .T-KT:not(.T-KT-Jp) img {
   filter: invert(0.85);
 }
 
@@ -192,7 +198,7 @@ html.reinbox .a3s[data-ri-body=plain] a {
 
 html.reinbox.ri-dark .a3s[data-ri-body=rich] {
   padding: 16px;
-  border-radius: 14px;
+  border-radius: var(--ri-radius-button-lg);
   background: var(--ri-paper);
   color: var(--ri-paper-text);
   color-scheme: light;
@@ -239,8 +245,9 @@ html.reinbox.ri-dark [role=main] .amn .ams::before {
 
 /* ---------- Compose (dialog and inline reply) ---------- */
 
+/* No overflow clipping: autocomplete and toolbar menus open inside it. The
+   header carries the top radius instead. */
 html.reinbox [role=dialog]:has(.aoI) {
-  overflow: hidden;
   border-radius: var(--ri-radius-card) var(--ri-radius-card) 0 0;
   background: var(--ri-surface);
   box-shadow: var(--ri-fab-shadow);
@@ -248,6 +255,7 @@ html.reinbox [role=dialog]:has(.aoI) {
 
 /* Header bar. */
 html.reinbox [role=dialog]:has(.aoI) .Hy {
+  border-radius: var(--ri-radius-card) var(--ri-radius-card) 0 0;
   background: var(--ri-surface2);
 }
 
@@ -332,8 +340,9 @@ html.reinbox .aoI :is(.aoO[role=button], .aoO[role=button] + .hG):hover {
   box-shadow: none;
 }
 
-/* Formatting toolbar icons are dark sprites; lighten them in dark mode. */
-html.reinbox.ri-dark .aoI tr.btC > td:not(:first-child) {
+/* Formatting toolbar icons are dark sprites; lighten them in dark mode. The
+   first cell is Send, whose arrow is already light. */
+html.reinbox.ri-dark .aoI tr.btC > td:not(:first-child) :is(.aaA, .dv, .og, .J-JN-M-I-JG, img) {
   filter: invert(0.85);
 }
 
@@ -342,5 +351,4 @@ html.reinbox [role=main] .aoI {
   border: 1px solid var(--ri-border);
   border-radius: var(--ri-radius-card);
   background: var(--ri-surface);
-  overflow: hidden;
 }
