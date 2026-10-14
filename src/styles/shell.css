@@ -1,1 +1,287 @@
-/* Owned by T3. */
+/* App shell: header, views control, nav drawer and compose FAB.
+   `[data-ri-shell]` parts are tagged by src/content/features/shell/header.ts.
+   Gmail hooks: src/content/gmail.ts. */
+
+/* ---- Header ---------------------------------------------------------- */
+
+html.reinbox header#gb {
+  background: var(--ri-bg) !important;
+  border: 0;
+  box-shadow: none !important;
+}
+
+html.reinbox [data-ri-shell="bar"] {
+  position: relative;
+  align-items: center;
+  box-sizing: border-box;
+  height: 72px;
+  padding: 0 20px;
+}
+
+/* The left part runs up to the right edge of the centered views control, so
+   the search box and icons can never slide underneath it. */
+html.reinbox [data-ri-shell="left"] {
+  flex: 0 0 calc(50% + var(--ri-views-w, 400px) / 2 + 16px);
+  min-width: 0 !important;
+}
+
+html.reinbox [data-ri-shell="middle"] {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
+  padding: 0;
+}
+
+/* Only the search box gives way when the header runs out of room. */
+html.reinbox [data-ri-shell="middle"] > :not([data-ri-shell="search"]) {
+  flex-shrink: 0;
+}
+
+/* Header icons: Gmail draws them dark for its light theme. The account
+   avatar badge keeps its own colors. */
+html.reinbox header#gb svg:not(a[href*="accounts.google.com"] svg) {
+  fill: var(--ri-text2);
+  color: var(--ri-text2);
+}
+
+/* Wordmark in place of the Gmail logo. */
+html.reinbox header#gb a[href="#inbox"] {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 8px;
+  text-decoration: none;
+}
+
+html.reinbox header#gb a[href="#inbox"] > * {
+  display: none !important;
+}
+
+html.reinbox header#gb a[href="#inbox"]::before {
+  content: "reinbox";
+  color: var(--ri-text);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* Gmail's "upgrade plan" pill: no place for it in Focus. */
+html.reinbox header#gb .s1rbBe {
+  display: none;
+}
+
+/* ---- Search ---------------------------------------------------------- */
+
+html.reinbox [data-ri-shell="search"] {
+  position: relative;
+  flex: 0 1 320px;
+  /* Narrow windows leave just the magnifier, as in the mockup; the box
+     grows when focused. */
+  min-width: 44px;
+  max-width: 320px;
+  margin-left: auto;
+  padding: 0 8px 0 0;
+}
+
+html.reinbox form[role="search"] {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  height: 44px;
+  border: 0;
+  border-radius: var(--ri-radius-button-lg);
+  background: var(--ri-surface2) !important;
+  box-shadow: none !important;
+  transition: width 0.15s ease;
+}
+
+/* While typing, the box grows leftwards over the views control. */
+html.reinbox form[role="search"]:focus-within {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  z-index: 2;
+  width: max(100%, min(560px, 45vw));
+  transform: translateY(-50%);
+  background: var(--ri-surface) !important;
+  box-shadow: var(--ri-shadow) !important;
+}
+
+/* Advanced search options only while the box is open. */
+html.reinbox form[role="search"]:not(:focus-within) button[gh="sda"] {
+  display: none;
+}
+
+html.reinbox form[role="search"] input {
+  color: var(--ri-text);
+}
+
+html.reinbox form[role="search"] input::placeholder {
+  color: var(--ri-text3);
+}
+
+/* ---- Views control --------------------------------------------------- */
+
+html.reinbox .ri-views {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--ri-radius-segmented);
+  background: var(--ri-surface2);
+  transform: translate(-50%, -50%);
+}
+
+html.reinbox .ri-views a {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--ri-radius-segment);
+  color: var(--ri-text2);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+html.reinbox .ri-views a:hover {
+  color: var(--ri-text);
+}
+
+html.reinbox .ri-views a[aria-current="page"] {
+  background: var(--ri-surface);
+  box-shadow: var(--ri-shadow);
+  color: var(--ri-text);
+  font-weight: 600;
+}
+
+html.reinbox .ri-views a:focus-visible,
+html.reinbox .ri-fab:focus-visible {
+  outline: 2px solid var(--ri-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1200px) {
+  html.reinbox .ri-views a {
+    padding: 0 12px;
+  }
+}
+
+/* ---- Nav drawer ------------------------------------------------------ */
+
+/* Gmail's left nav leaves the layout and waits off screen. Gmail sets its
+   size inline, hence the !important. */
+html.reinbox .aeN {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0;
+  left: 0 !important;
+  z-index: 1001;
+  box-sizing: border-box;
+  width: 280px !important;
+  min-width: 280px;
+  max-width: 280px;
+  height: auto !important;
+  padding: 16px 8px 16px 0;
+  border-radius: 0 var(--ri-radius-card) var(--ri-radius-card) 0;
+  background: var(--ri-surface) !important;
+  box-shadow: none !important;
+  color: var(--ri-text);
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.2s ease, visibility 0s linear 0.2s;
+}
+
+html.reinbox.ri-drawer-open .aeN {
+  box-shadow: var(--ri-fab-shadow) !important;
+  transform: none;
+  visibility: visible;
+  transition: transform 0.2s ease;
+}
+
+/* The space Gmail reserves for the collapsed rail. */
+html.reinbox .aeN + .bkK {
+  margin-left: 0 !important;
+}
+
+/* Compose lives in the FAB. */
+html.reinbox .aeN .aic {
+  display: none;
+}
+
+/* Nav items (`.TO`, `.nZ` when current). Label swatches use background and
+   border colors, so text color can be forced everywhere. */
+html.reinbox .aeN * {
+  color: inherit !important;
+}
+
+html.reinbox .aeN .TO:hover {
+  background: var(--ri-hover) !important;
+}
+
+html.reinbox .aeN .TO.nZ {
+  background: var(--ri-accent-soft) !important;
+}
+
+/* Gmail's nav icons are dark background images; the colored label
+   swatches set an inline background color and are left alone. */
+html.reinbox.ri-dark .aeN :is(.qj, .pM, .G-asx):not([style*="background-color"]) {
+  filter: invert(1) brightness(0.8);
+}
+
+html.reinbox .ri-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: color-mix(in srgb, var(--ri-text) 24%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* A light scrim would glow over the dark page. */
+html.reinbox.ri-dark .ri-scrim {
+  background: color-mix(in srgb, var(--ri-bg) 70%, transparent);
+}
+
+html.reinbox.ri-drawer-open .ri-scrim {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- Compose FAB and side panel -------------------------------------- */
+
+/* Focus has no side panel (Calendar, Keep, Tasks, add-ons). */
+html.reinbox .bAw {
+  display: none !important;
+}
+
+html.reinbox .ri-fab {
+  position: fixed;
+  right: 36px;
+  bottom: 36px;
+  /* Under Gmail's compose layer (`.dw`, z-index 3). */
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ri-radius-round);
+  background: var(--ri-text);
+  box-shadow: var(--ri-fab-shadow);
+  color: var(--ri-bg);
+  cursor: pointer;
+}
+
+/* An open compose window sits where the FAB is. */
+html.reinbox:has(.dw [role="dialog"]) .ri-fab {
+  display: none;
+}

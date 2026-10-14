@@ -1,4 +1,11 @@
-// Owned by T3. Placeholder until then.
+import * as drawer from "./shell/drawer";
+import * as fab from "./shell/fab";
+import * as header from "./shell/header";
+
+// Header with the views control, left nav as an overlay drawer, compose FAB.
 export function start(): () => void {
-  return () => {};
+  const stops = [header.start(), drawer.start(), fab.start()];
+  return () => {
+    for (const stop of stops) stop();
+  };
 }
