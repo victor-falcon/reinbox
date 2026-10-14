@@ -21,6 +21,13 @@ export const SELECTORS = {
   toolbarActions: ".G-tF",
   toolbarCheckbox: "[role=checkbox]",
   selectedRow: "[role=main] tr.zA.x7",
+  // Search refinement chips ("From", "Any time", "Has attachment"...). Each
+  // chip is a [role=button] with a data-type; dropdown chips sit in an .S0
+  // wrapper and carry data-default-label; .H5 is the visible label.
+  filterBar: "[role=main] [role=toolbar].G6",
+  filterChip: "[role=button][data-type]",
+  filterChipHolder: ".S0:not([role])",
+  filterChipLabel: ".H5",
   rightPanel: ".bAw",
   // Page footer: storage meter, terms and last account activity.
   footer: ".aeG",
