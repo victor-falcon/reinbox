@@ -47,26 +47,9 @@ html.reinbox header#gb svg:not(a[href*="accounts.google.com"] svg) {
   color: var(--ri-text2);
 }
 
-/* Wordmark in place of the Gmail logo. */
+/* No logo: Focus keeps the header to the menu, views and search. */
 html.reinbox header#gb a[href="#inbox"] {
-  display: flex;
-  align-items: center;
-  height: 48px;
-  padding: 0 8px;
-  text-decoration: none;
-}
-
-html.reinbox header#gb a[href="#inbox"] > * {
   display: none !important;
-}
-
-html.reinbox header#gb a[href="#inbox"]::before {
-  content: "reinbox";
-  color: var(--ri-text);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1;
 }
 
 /* Gmail's "upgrade plan" pill: no place for it in Focus. */
@@ -180,7 +163,7 @@ html.reinbox .ri-fab:focus-visible {
 }
 
 /* Too narrow to center the views on the window and keep a usable search
-   box: they sit between the wordmark and the search box instead. */
+   box: they sit between the menu button and the search box instead. */
 @media (max-width: 1365px) {
   html.reinbox [data-ri-shell="bar"] > * {
     order: 1;
@@ -198,7 +181,7 @@ html.reinbox .ri-fab:focus-visible {
     transform: none;
   }
 
-  /* Keeps the views clear of the wordmark and the search box. */
+  /* Keeps the views clear of the menu button and the search box. */
   html.reinbox [data-ri-shell="bar"] {
     gap: 16px;
   }

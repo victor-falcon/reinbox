@@ -39,11 +39,32 @@ html.reinbox [role=main] [gh=tm] {
   width: auto;
   max-width: none;
   margin-left: 0;
-  padding-inline: max(32px, calc((100% - var(--ri-column)) / 2 + 32px));
+  padding-inline: 32px;
   box-sizing: border-box;
   border: 0;
   background: var(--ri-bg);
   box-shadow: none;
+}
+
+/* Center the toolbar's contents horizontally: Gmail floats the actions left
+   and the pagination right, which spreads them past the list column. */
+html.reinbox [role=main] [gh=tm] > .aqK {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 16px;
+}
+
+html.reinbox [role=main] [gh=tm] > .aqK > :is(.aqL, .aqJ) {
+  float: none;
+  flex: none;
+  margin-inline: 0 !important;
+}
+
+/* Gmail's hover-only "Unsubscribe" chip adds a line and shifts the row. */
+html.reinbox [role=main] tr.zA .aKS {
+  display: none !important;
 }
 
 /* Gmail's white layer behind the sticky toolbar. */
