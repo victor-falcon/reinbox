@@ -1,11 +1,5 @@
 import { SELECTORS, onDomChange } from "../gmail";
-import { t } from "../i18n";
 
-// Set on the thread toolbar's Archive button, restyled as Done. Its value is
-// the visible label.
-const DONE_ATTR = "data-ri-done";
-// Gmail's own aria-label of that button, restored on cleanup.
-const ARIA_BACKUP_ATTR = "data-ri-aria-label";
 // "plain" or "rich" on each email body, read by conversation.css.
 const BODY_ATTR = "data-ri-body";
 
@@ -28,26 +22,6 @@ const GMAIL_UI_IN_BODY = ".ajR";
 // Element count each body had when classified, to re-check it when it grows.
 const classified = new WeakMap<Element, number>();
 
-function labelDoneButton(archive: Element): void {
-  const label = t("doneButton");
-  if (archive.getAttribute(DONE_ATTR) !== label) archive.setAttribute(DONE_ATTR, label);
-  const ariaLabel = t("markDone");
-  if (archive.getAttribute("aria-label") !== ariaLabel) {
-    if (!archive.hasAttribute(ARIA_BACKUP_ATTR)) {
-      archive.setAttribute(ARIA_BACKUP_ATTR, archive.getAttribute("aria-label") ?? "");
-    }
-    archive.setAttribute("aria-label", ariaLabel);
-  }
-}
-
-// Only thread toolbars have a Back button; the list toolbar's Archive stays.
-function labelDoneButtons(): void {
-  for (const back of document.querySelectorAll(SELECTORS.threadBack)) {
-    const archive = back.closest(SELECTORS.threadToolbar)?.querySelector(SELECTORS.threadArchive);
-    if (archive) labelDoneButton(archive);
-  }
-}
-
 function bodyKind(body: Element): BodyKind {
   for (const el of body.querySelectorAll(RICH_CONTENT)) {
     if (!el.closest(GMAIL_UI_IN_BODY)) return "rich";
@@ -67,28 +41,12 @@ function classifyBodies(): void {
   }
 }
 
-function restoreDoneButtons(): void {
-  for (const el of document.querySelectorAll(`[${DONE_ATTR}]`)) {
-    el.removeAttribute(DONE_ATTR);
-    const original = el.getAttribute(ARIA_BACKUP_ATTR);
-    if (original === null) continue;
-    if (original) el.setAttribute("aria-label", original);
-    else el.removeAttribute("aria-label");
-    el.removeAttribute(ARIA_BACKUP_ATTR);
-  }
-}
-
 export function start(): () => void {
-  const update = () => {
-    labelDoneButtons();
-    classifyBodies();
-  };
-  update();
-  const stop = onDomChange(update);
+  classifyBodies();
+  const stop = onDomChange(classifyBodies);
 
   return () => {
     stop();
-    restoreDoneButtons();
     for (const el of document.querySelectorAll(`[${BODY_ATTR}]`)) el.removeAttribute(BODY_ATTR);
   };
 }

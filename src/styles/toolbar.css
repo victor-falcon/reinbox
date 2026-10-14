@@ -1,0 +1,365 @@
+/* Gmail's list and thread toolbar, Focus "floating" design
+   (docs/design/toolbar). toolbar.ts tags the toolbar with `data-ri-toolbar`
+   (list | select | thread) and each button with `data-ri-action`.
+   The buttons stay Gmail's own, so their menus and shortcuts keep working.
+   Gmail hides actions that don't apply with inline `display: none`, so
+   `display` is never set with !important on a button. */
+
+html.reinbox {
+  --ri-i-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+  --ri-i-clock: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16zM12 8v4l3 2'/%3E%3C/svg%3E");
+  --ri-i-move: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h6l2 2h8v9H4zM12 11v5M10 14l2 2 2-2'/%3E%3C/svg%3E");
+  --ri-i-label: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h8l8 8-8 8-8-8zM8.5 8.5h.01'/%3E%3C/svg%3E");
+  --ri-i-unread: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6h16v12H4zM4 7l8 6 8-6'/%3E%3C/svg%3E");
+  --ri-i-read: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 10l8-6 8 6v9H4zM4 10l8 6 8-6'/%3E%3C/svg%3E");
+  --ri-i-trash: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12'/%3E%3C/svg%3E");
+  --ri-i-spam: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8.5 3h7L21 8.5v7L15.5 21h-7L3 15.5v-7zM12 8v5M12 16h.01'/%3E%3C/svg%3E");
+  --ri-i-tasks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16v16H4zM8 12.5l3 3 5-6'/%3E%3C/svg%3E");
+  --ri-i-more: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12h.01M12 12h.01M18 12h.01'/%3E%3C/svg%3E");
+  --ri-i-back: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 12H5M11 6l-6 6 6 6'/%3E%3C/svg%3E");
+  --ri-i-refresh: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5'/%3E%3C/svg%3E");
+  --ri-i-x: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E");
+  /* Left/right inset that lines the toolbar up with the content column. */
+  --ri-tb-inset: max(20px, calc((100% - var(--ri-column)) / 2 + 20px));
+}
+
+/* ---- Shared --------------------------------------------------------- */
+
+html.reinbox [data-ri-toolbar] {
+  position: relative;
+  width: auto;
+  max-width: none;
+  margin-left: 0;
+  padding-inline: var(--ri-tb-inset);
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Gmail's white layer behind the sticky toolbar. */
+html.reinbox [data-ri-toolbar]::after {
+  content: none;
+}
+
+/* Input tools toggle: no place for it in Focus. */
+html.reinbox [data-ri-toolbar] .aBS {
+  display: none !important;
+}
+
+html.reinbox [data-ri-toolbar] > .aqK {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+html.reinbox [data-ri-toolbar] > .aqK > :is(.aqL, .aqJ) {
+  float: none;
+  flex: none;
+  margin-inline: 0 !important;
+}
+
+/* Gmail wraps buttons in groups; flatten them so each button can be ordered
+   and styled on its own. */
+html.reinbox [data-ri-toolbar] :is(.bzn, .G-Ni) {
+  display: contents;
+}
+
+html.reinbox [data-ri-toolbar] .G-tF {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  /* Gmail fixes it at the 20px of its text buttons. */
+  height: auto !important;
+}
+
+/* Icon buttons: Gmail's text or sprite is replaced by a mask icon. */
+html.reinbox [data-ri-toolbar] [data-ri-action]:where(:not([data-ri-action="other"], [data-ri-action="select"])) {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 36px;
+  height: 36px !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 9px !important;
+  border: 0 !important;
+  border-radius: var(--ri-radius-button) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ri-text2) !important;
+  font: 600 13px / 1 var(--ri-font) !important;
+  opacity: 1 !important;
+  box-sizing: border-box;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action]:where(:not([data-ri-action="other"], [data-ri-action="select"], [style*="display: none"])) {
+  display: inline-flex;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action]:where(:not([data-ri-action="other"], [data-ri-action="select"])) > * {
+  display: none !important;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action]:where(:not([data-ri-action="other"], [data-ri-action="select"]))::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask: var(--ri-icon) center / contain no-repeat;
+  mask: var(--ri-icon) center / contain no-repeat;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action]:where(:not([data-ri-action="other"], [data-ri-action="select"])):hover {
+  background: var(--ri-hover) !important;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action]:focus-visible {
+  outline: 2px solid var(--ri-accent);
+  outline-offset: 2px;
+}
+
+html.reinbox [data-ri-action="done"] { --ri-icon: var(--ri-i-check); }
+html.reinbox [data-ri-action="snooze"] { --ri-icon: var(--ri-i-clock); }
+html.reinbox [data-ri-action="move"] { --ri-icon: var(--ri-i-move); }
+html.reinbox [data-ri-action="labels"] { --ri-icon: var(--ri-i-label); }
+html.reinbox [data-ri-action="unread"] { --ri-icon: var(--ri-i-unread); }
+html.reinbox [data-ri-action="read"] { --ri-icon: var(--ri-i-read); }
+html.reinbox [data-ri-action="delete"] { --ri-icon: var(--ri-i-trash); }
+html.reinbox [data-ri-action="spam"] { --ri-icon: var(--ri-i-spam); }
+html.reinbox [data-ri-action="tasks"] { --ri-icon: var(--ri-i-tasks); }
+html.reinbox [data-ri-action="more"] { --ri-icon: var(--ri-i-more); }
+html.reinbox [data-ri-action="back"] { --ri-icon: var(--ri-i-back); }
+html.reinbox [data-ri-action="refresh"] { --ri-icon: var(--ri-i-refresh); }
+
+/* Done: the one accent action. */
+html.reinbox [data-ri-toolbar] [data-ri-action="done"] {
+  background: var(--ri-accent) !important;
+  color: var(--ri-on-accent) !important;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action="done"]:hover {
+  background: var(--ri-accent) !important;
+  filter: brightness(1.08);
+}
+
+/* Unknown actions (Delete forever, Not spam...) keep Gmail's text label. */
+html.reinbox [data-ri-toolbar] [data-ri-action="other"] {
+  height: 36px;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: var(--ri-radius-button) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font: 600 13px / 36px var(--ri-font) !important;
+}
+
+html.reinbox [data-ri-toolbar] [data-ri-action="other"] * {
+  color: inherit !important;
+}
+
+/* Pagination: quiet text and arrows. */
+html.reinbox [data-ri-toolbar] .aqJ .amH,
+html.reinbox [data-ri-toolbar] .aqJ .Di {
+  color: var(--ri-text3);
+  font: 500 13px var(--ri-font);
+}
+
+html.reinbox.ri-dark [data-ri-toolbar] .aqJ img {
+  filter: invert(0.8);
+}
+
+/* ---- List: no toolbar, just pagination and refresh on the heading line -- */
+
+html.reinbox [data-ri-toolbar]:is([data-ri-toolbar="list"], [data-ri-toolbar="select"]) {
+  z-index: 2;
+  height: 0;
+  overflow: visible;
+}
+
+html.reinbox [data-ri-toolbar]:is([data-ri-toolbar="list"], [data-ri-toolbar="select"]) > .aqK {
+  position: relative;
+  top: 22px;
+}
+
+/* The floating bar lives inside the toolbar's stacking context: lift it over
+   Gmail's bottom notices (z-index 6) while staying under its menus (7). */
+html.reinbox [data-ri-toolbar="select"] {
+  z-index: 6;
+}
+
+/* Refresh after the pagination; selection checkbox and More are dropped
+   (rows are selected from their avatars). */
+html.reinbox [data-ri-toolbar="list"] .aqL {
+  order: 2;
+}
+
+html.reinbox [data-ri-toolbar="list"] :is([data-ri-action="select"], [data-ri-action="more"]) {
+  display: none !important;
+}
+
+/* ---- Selection: the actions float at the bottom ------------------------ */
+
+html.reinbox [data-ri-toolbar="select"] .G-tF {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 1;
+  transform: translateX(-50%);
+  padding: 6px;
+  border-radius: 20px;
+  background: var(--ri-text);
+  color: var(--ri-bg);
+  box-shadow: var(--ri-fab-shadow);
+  white-space: nowrap;
+}
+
+html.reinbox [data-ri-toolbar="select"] .G-tF [data-ri-action]:not([data-ri-action="done"]) {
+  color: var(--ri-bg) !important;
+}
+
+html.reinbox [data-ri-toolbar="select"] .G-tF [data-ri-action]:not([data-ri-action="done"]):hover {
+  background: color-mix(in srgb, var(--ri-bg) 14%, transparent) !important;
+}
+
+html.reinbox [data-ri-toolbar="select"] :is([data-ri-action="select"], [data-ri-action="refresh"]) {
+  display: none !important;
+}
+
+/* Order inside the bar: count, Done, Snooze, Move, then icon-only actions. */
+html.reinbox [data-ri-toolbar="select"] .ri-selection-label { order: 0; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="done"] { order: 1; margin-inline: 4px !important; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="snooze"] { order: 2; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="move"] { order: 3; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="labels"] { order: 5; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="unread"],
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="read"] { order: 6; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="tasks"] { order: 7; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="delete"] { order: 8; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="spam"] { order: 9; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="other"] { order: 10; }
+html.reinbox [data-ri-toolbar="select"] [data-ri-action="more"] { order: 11; }
+
+/* A divider before the icon-only group. */
+html.reinbox [data-ri-toolbar="select"] .G-tF::after {
+  content: "";
+  order: 4;
+  width: 1px;
+  height: 22px;
+  margin: 0 6px;
+  background: color-mix(in srgb, var(--ri-bg) 22%, transparent);
+}
+
+/* Done, Snooze and Move carry their label. */
+html.reinbox [data-ri-toolbar="select"] :is([data-ri-action="done"], [data-ri-action="snooze"], [data-ri-action="move"])::after {
+  content: attr(data-ri-label);
+}
+
+html.reinbox [data-ri-toolbar="select"] :is([data-ri-action="done"], [data-ri-action="snooze"], [data-ri-action="move"]) {
+  padding: 0 12px 0 10px !important;
+}
+
+html.reinbox .ri-selection-label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 8px;
+  font: 700 14px var(--ri-font);
+}
+
+html.reinbox .ri-selection-clear {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--ri-radius-button);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+html.reinbox .ri-selection-clear::before {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: auto;
+  background: currentColor;
+  -webkit-mask: var(--ri-i-x) center / contain no-repeat;
+  mask: var(--ri-i-x) center / contain no-repeat;
+}
+
+html.reinbox .ri-selection-clear:hover {
+  background: color-mix(in srgb, var(--ri-bg) 14%, transparent);
+}
+
+html.reinbox .ri-selection-clear:focus-visible {
+  outline: 2px solid var(--ri-accent);
+  outline-offset: 2px;
+}
+
+/* The floating bar and the compose button share the bottom edge. */
+html.reinbox.ri-selection .ri-fab {
+  display: none;
+}
+
+/* ---- Thread: back on the left, actions in a capsule on the right ------- */
+
+/* Gmail's thread toolbar has no .aqK row: the button group and the
+   "1 of 5" pagination (.adF) are direct children. */
+html.reinbox [data-ri-toolbar="thread"] {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-block: 8px;
+}
+
+html.reinbox [data-ri-toolbar="thread"] .adF {
+  float: none;
+  margin: 0 !important;
+  color: var(--ri-text3);
+  font: 500 13px var(--ri-font);
+}
+
+html.reinbox.ri-dark [data-ri-toolbar="thread"] .adF img {
+  filter: invert(0.8);
+}
+
+html.reinbox [data-ri-toolbar="thread"] .G-tF {
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--ri-surface2);
+}
+
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="back"] {
+  position: absolute;
+  left: var(--ri-tb-inset);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px !important;
+  border-radius: 14px !important;
+  background: var(--ri-surface2) !important;
+  color: var(--ri-text) !important;
+}
+
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="done"] {
+  order: 99;
+  margin-left: 2px !important;
+}
+
+/* Capsule order: snooze, move, labels, read state, tasks, delete, spam,
+   more, then Done. */
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="snooze"] { order: 1; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="move"] { order: 2; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="labels"] { order: 3; }
+html.reinbox [data-ri-toolbar="thread"] :is([data-ri-action="unread"], [data-ri-action="read"]) { order: 4; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="tasks"] { order: 5; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="delete"] { order: 6; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="spam"] { order: 7; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="other"] { order: 8; }
+html.reinbox [data-ri-toolbar="thread"] [data-ri-action="more"] { order: 98; }

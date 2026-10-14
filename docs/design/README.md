@@ -12,6 +12,7 @@ to read when implementing.
 | --- | --- | --- |
 | **Focus** | Implemented first | `focus/Focus.dc.html`, `focus/FocusDark.dc.html` |
 | **Paper** | Kept for later | `paper/Paper.dc.html`, `paper/PaperDark.dc.html` |
+| **Toolbar · Floating** | Implemented | `toolbar/Floating.dc.html`, `toolbar/FloatingDark.dc.html` |
 
 ## Focus
 
@@ -75,3 +76,21 @@ square icon and a count. Blue accent, square-ish rounded FAB (20px radius).
 | Updates | `#B86E00` | `#E5A13A` |
 | Finance | `#2E8B48` | `#4FB06A` |
 | Travel | `#6E52D8` | `#9B83F0` |
+
+## Toolbar · Floating
+
+Chosen among three toolbar directions (Quiet, Floating, Command). Gmail's
+toolbar buttons are kept, so their menus and shortcuts work; only their
+placement and look change.
+
+- **List, nothing selected**: no toolbar. Pagination and refresh sit on the
+  first date heading's line, right-aligned.
+- **List, selection**: a floating dark bar at the bottom center: clear (×),
+  "N selected", Done (accent, labeled), Snooze and Move (labeled), then
+  icon-only labels, read state, tasks, delete, spam and More.
+- **Conversation**: a round Back button on the left; the actions in a
+  `surface2` capsule on the right ending with Done as an accent icon; "1 of N"
+  after it.
+- **Search filters**: one "Filters (n)" button with the active filters as
+  removable chips; the options open in a menu.
+- **Trash / Spam**: the same floating bar with Restore and Delete forever.

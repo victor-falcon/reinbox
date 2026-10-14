@@ -1,6 +1,6 @@
 /* Conversation view and compose window. Gmail hooks: src/content/gmail.ts
-   (thread*, compose*, messageBody). conversation.ts adds `data-ri-done` to
-   the thread's Archive button and `data-ri-body` to each email body. */
+   (thread*, compose*, messageBody). conversation.ts adds `data-ri-body` to each email body. The thread toolbar
+   lives in toolbar.css. */
 
 html.reinbox {
   /* Email bodies with their own colors stay on a light "paper" sheet in dark
@@ -16,82 +16,6 @@ html.reinbox {
 
 html.reinbox.ri-dark {
   --ri-on-accent: var(--ri-bg);
-}
-
-/* ---------- Thread toolbar ---------- */
-
-/* Same column as the thread below it. */
-html.reinbox [gh=tm]:has([act="19"]) {
-  /* The thread adds 16px of its own padding inside the column. */
-  padding-inline: max(16px, calc((100% - var(--ri-thread-column)) / 2 + 16px));
-  background: transparent;
-}
-
-html.reinbox [gh=mtb]:has([act="19"]) .T-I {
-  color: var(--ri-text2);
-  border-radius: var(--ri-radius-button);
-}
-
-/* Text labels (Gmail's "button labels: text" setting). */
-html.reinbox [gh=mtb]:has([act="19"]) .T-I .Bn {
-  color: inherit;
-}
-
-/* Icon labels are dark sprites. */
-html.reinbox.ri-dark [gh=mtb]:has([act="19"]) .T-I .asa {
-  filter: invert(0.85);
-}
-
-html.reinbox [gh=mtb]:has([act="19"]) .T-I:hover {
-  background: var(--ri-hover);
-  box-shadow: none;
-}
-
-/* Archive becomes Done: an accent pill with a check, like the list rows. */
-html.reinbox [data-ri-done] {
-  /* No !important: Gmail hides actions that don't apply with inline styles. */
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 36px;
-  /* Keeps the toolbar's line box: text-label buttons are only 20px tall. */
-  margin: -8px 8px -8px 4px;
-  padding: 0 14px 0 12px !important;
-  border: 0 !important;
-  border-radius: var(--ri-radius-button) !important;
-  background: var(--ri-accent) !important;
-  color: var(--ri-on-accent) !important;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: none !important;
-  opacity: 1 !important;
-}
-
-html.reinbox [data-ri-done]:hover {
-  background: var(--ri-accent) !important;
-  filter: brightness(1.08);
-}
-
-html.reinbox [data-ri-done]:focus-visible {
-  outline: 2px solid var(--ri-text);
-  outline-offset: 2px;
-}
-
-html.reinbox [data-ri-done] > * {
-  display: none !important;
-}
-
-html.reinbox [data-ri-done]::before {
-  content: "";
-  width: 18px;
-  height: 18px;
-  background: currentColor;
-  -webkit-mask: var(--ri-check-icon) center / contain no-repeat;
-  mask: var(--ri-check-icon) center / contain no-repeat;
-}
-
-html.reinbox [data-ri-done]::after {
-  content: attr(data-ri-done);
 }
 
 /* ---------- Thread column ---------- */
