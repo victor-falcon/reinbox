@@ -16,6 +16,8 @@ export const SELECTORS = {
   main: "[role=main]",
   toolbar: "[gh=tm]",
   rightPanel: ".bAw",
+  // Page footer: storage meter, terms and last account activity.
+  footer: ".aeG",
   // Gmail's white rounded panel around the list/conversation, and its scroller
   appPanel: ".bkK > .nH",
   scroller: ".Tm",
