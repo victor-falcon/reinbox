@@ -312,3 +312,11 @@ html.reinbox .ri-fab {
 html.reinbox:has(.dw [role="dialog"]) .ri-fab {
   display: none;
 }
+
+/* ---- Footer ----------------------------------------------------------- */
+
+/* Gmail's page footer (storage meter, terms, last account activity): no
+   place for it in Focus. */
+html.reinbox .aeG {
+  display: none !important;
+}
