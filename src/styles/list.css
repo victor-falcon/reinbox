@@ -144,7 +144,7 @@ html.reinbox .ri-avatar {
    whose own marker lives in a hidden cell. */
 html.reinbox [role=main] tr.zA > td.oZ-x3:has(:focus-visible) .ri-avatar,
 html.reinbox [role=main] tr.zA.btb .ri-avatar {
-  outline: 2px solid var(--ri-text3);
+  outline: 1.5px solid color-mix(in srgb, var(--ri-text3) 55%, transparent);
   outline-offset: 2px;
 }
 
@@ -455,7 +455,7 @@ html.reinbox [role=main] tr.zA > td.bq4 li.bqX.brq:hover {
    hover background does not cover them. */
 
 html.reinbox [role=main] tr.zA[data-ri-group] {
-  margin-top: 82px;
+  margin-top: 66px;
 }
 
 html.reinbox [role=main] tr.zA[data-ri-group]:first-child {
@@ -489,4 +489,25 @@ html.reinbox [role=main] tr.zA[data-ri-group-sub]::after {
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
+}
+
+/* The row itself never shows a browser focus outline: the avatar ring above
+   marks keyboard focus. */
+html.reinbox [role=main] tr.zA:focus {
+  outline: none;
+}
+
+/* ---- Empty views ("No drafts", "Nothing snoozed") ---- */
+
+html.reinbox [role=main] table.TB,
+html.reinbox [role=main] table.TB :is(tr, td) {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html.reinbox [role=main] table.TB td.TC {
+  padding: 72px 24px !important;
+  color: var(--ri-text2);
+  font: 500 15px / 1.6 var(--ri-font);
+  text-align: center;
 }

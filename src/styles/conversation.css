@@ -272,9 +272,51 @@ html.reinbox.ri-dark .aoI tr.btC > td:not(:first-child) :is(.aaA, .dv, .og, .J-J
   filter: invert(0.85);
 }
 
-/* The inline reply is its own card inside the thread. */
+/* The inline reply is one card inside the thread: Gmail draws its own card
+   (td.I5, white with a shadow) inside .aoI, so .aoI stays bare and the inner
+   cell takes the Focus card look. */
 html.reinbox [role=main] .aoI {
-  border: 1px solid var(--ri-border);
-  border-radius: var(--ri-radius-card);
-  background: var(--ri-surface);
+  border: 0 !important;
+  background: transparent !important;
+}
+
+html.reinbox [role=main] .aoI td.I5 {
+  border: 1px solid var(--ri-border) !important;
+  border-radius: var(--ri-radius-card) !important;
+  background: var(--ri-surface) !important;
+  box-shadow: none !important;
+}
+
+html.reinbox [role=main] .aoI :is(table.IG, .aC2, .aC3) {
+  background: transparent !important;
+}
+
+/* Subject row: aligned with the message card's content instead of Gmail's
+   avatar column (a 72px padding on the subject's wrapper). */
+html.reinbox [role=main] .a98 div:has(> div > .ha) {
+  padding-left: 20px !important;
+}
+
+html.reinbox [role=main] .a98 .ha {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Gmail docks the reply's send bar to the bottom of the window while the
+   reply is taller than the view; it draws a white frame around it. */
+html.reinbox [role=main] .aoI .aDj {
+  border: 0 !important;
+  outline: 0 !important;
+  border-radius: 0 0 var(--ri-radius-card) var(--ri-radius-card);
+  background: var(--ri-surface) !important;
+  box-shadow: 0 -1px 0 var(--ri-border) !important;
+}
+
+/* Its pseudo-elements are a white mask 8px wider than the bar and a shadow. */
+html.reinbox [role=main] .aoI .aDj::after {
+  display: none !important;
+}
+
+html.reinbox [role=main] .aoI .aDj::before {
+  box-shadow: none !important;
 }

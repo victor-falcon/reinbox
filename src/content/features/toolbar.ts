@@ -141,6 +141,7 @@ function update(): void {
     setAttr(toolbar, STATE_ATTR, state);
     tagButtons(toolbar);
     if (state === "select") ensureSelectionLabel(toolbar, count);
+    else toolbar.querySelector(".ri-selection-label")?.remove();
   }
 }
 
