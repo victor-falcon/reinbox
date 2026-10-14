@@ -1,9 +1,15 @@
 /*
- * Reinbox styles. Every rule is scoped to `html.reinbox` plus the class of
- * the preference that enables it, so turning a preference off restores
- * Gmail's original look.
+ * Reinbox styles. Every rule is scoped to `html.reinbox` (and
+ * `html.reinbox.ri-dark` for dark values), so disabling the extension
+ * restores Gmail's original look.
  *
  * Gmail's own class names are obfuscated and change over time. Prefer
- * structural hooks (ids, roles, aria attributes) and keep the obfuscated
- * selectors in one place per feature so they are easy to update.
+ * structural hooks (ids, roles, aria attributes); the obfuscated ones are
+ * documented in src/content/gmail.ts.
  */
+@import "./fonts.css";
+@import "./tokens.css";
+@import "./base.css";
+@import "./list.css";
+@import "./shell.css";
+@import "./conversation.css";

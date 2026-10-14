@@ -1,0 +1,35 @@
+/* App-level surfaces only. List, header and conversation details live in
+   list.css, shell.css and conversation.css. Gmail hooks: src/content/gmail.ts. */
+
+html.reinbox.ri-dark {
+  color-scheme: dark;
+}
+
+/* `.wl` is Gmail's full-page background layer; Focus replaces the user's
+   Gmail theme image with the plain token background. */
+html.reinbox,
+html.reinbox body,
+html.reinbox .wl {
+  background: var(--ri-bg);
+}
+
+html.reinbox body {
+  color: var(--ri-text);
+}
+
+/* Gmail's white rounded panel around the list/conversation, and its scroller. */
+html.reinbox .bkK > .nH,
+html.reinbox .Tm {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Gmail sets its fonts on hundreds of classes, some up to four classes deep,
+   so the override reaches every element and needs !important. Rendered mail
+   (.a3s), the compose editor (.editable) and Gmail's icon fonts keep their
+   own fonts. A rule that wants another font must use !important too. */
+html.reinbox body,
+html.reinbox body :not(.a3s, .a3s *, .editable, .editable *, .bjx, .MB-JX-a2N-Sf, .aqdrmf-Kf-mDv2w-JX, .google-material-icons, [class*="material-symbols"]) {
+  font-family: var(--ri-font) !important;
+}
